@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Payoff Calculator - Calculator Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 30px auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+        }
+
+        .calculator-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #2575fc;
+            border-bottom: 3px solid #2575fc;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2575fc;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #2575fc;
+        }
+
+        .slider-container {
+            margin-top: 10px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #ddd;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #2575fc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: #1a60d0;
+            transform: scale(1.1);
+        }
+
+        .slider-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            background: #1a60d0;
+        }
+
+        .results {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .results h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: #2575fc;
+            font-size: 1.3rem;
+        }
+
+        .payment-plan {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e6f7ff;
+            border-radius: 8px;
+        }
+
+        .payment-plan h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .plan-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .plan-option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .plan-option:hover {
+            border-color: #2575fc;
+        }
+
+        .plan-option.active {
+            border-color: #2575fc;
+            background: #f0f5ff;
+        }
+
+        .plan-option h5 {
+            color: #2575fc;
+            margin-bottom: 5px;
+        }
+
+        .chart-container {
+            margin-top: 30px;
+            position: relative;
+            height: 300px;
+        }
+
+        .amortization {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .amortization h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .amortization-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .amortization-table th,
+        .amortization-table td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .amortization-table th {
+            background: #2575fc;
+            color: white;
+        }
+
+        .amortization-table tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e6f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #2575fc;
+        }
+
+        .explanation h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0 10px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                padding-left: 80px;
+            }
+
+            .header p {
+                padding-left: 80px;
+            }
+
+            .calculator {
+                padding: 15px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-options {
+                grid-template-columns: 1fr;
+            }
+
+
+            .header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .header h1,
+            .header p {
+                padding-left: 0;
+            }
+
+            .calculator-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1;
+                text-align: center;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Credit Card Payoff Calculator</h1>
+            <p>Calculate how long it will take to pay off your credit card debt</p>
+        </div>
+
+        <div class="calculator">
+            <div class="calculator-tabs">
+                <div class="tab active" data-tab="payoff">Payoff Calculator</div>
+                <div class="tab" data-tab="compare">Compare Strategies</div>
+            </div>
+
+            <!-- Payoff Calculator Tab -->
+            <div class="tab-content active" id="payoff-tab">
+                <div class="input-group">
+                    <label for="balance">Credit Card Balance ($)</label>
+                    <input type="number" id="balance" placeholder="Enter current balance" value="5000">
+                    <div class="slider-container">
+                        <input type="range" min="100" max="50000" value="5000" class="slider" id="balance-slider">
+                        <div class="slider-values">
+                            <span>$100</span>
+                            <span>$25K</span>
+                            <span>$50K</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="apr">Annual Interest Rate (APR %)</label>
+                    <input type="number" id="apr" placeholder="Enter interest rate" value="18.9" step="0.1">
+                    <div class="slider-container">
+                        <input type="range" min="0" max="30" value="18.9" step="0.1" class="slider" id="apr-slider">
+                        <div class="slider-values">
+                            <span>0%</span>
+                            <span>15%</span>
+                            <span>30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="payment">Monthly Payment ($)</label>
+                    <input type="number" id="payment" placeholder="Enter monthly payment" value="200">
+                    <div class="slider-container">
+                        <input type="range" min="10" max="1000" value="200" step="10" class="slider" id="payment-slider">
+                        <div class="slider-values">
+                            <span>$10</span>
+                            <span>$500</span>
+                            <span>$1000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" id="calculate-payoff">
+                    Calculate Payoff Plan
+                </button>
+
+                <div class="results" id="payoff-results">
+                    <h3>Payoff Results</h3>
+
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">Time to Pay Off</span>
+                            <div class="result-value" id="payoff-time">0 months</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Total Interest</span>
+                            <div class="result-value" id="total-interest">$0</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Total Payment</span>
+                            <div class="result-value" id="total-payment">$0</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Payoff Date</span>
+                            <div class="result-value" id="payoff-date">-</div>
+                        </div>
+                    </div>
+
+                    <div class="payment-plan">
+                        <h4>Payment Strategies</h4>
+                        <p>Consider these strategies to pay off your debt faster:</p>
+
+                        <div class="plan-options">
+                            <div class="plan-option" data-payment="250">
+                                <h5>Avalanche Method</h5>
+                                <p>Pay $250/month</p>
+                                <p>Focus on highest interest debt first</p>
+                            </div>
+
+                            <div class="plan-option" data-payment="300">
+                                <h5>Snowball Method</h5>
+                                <p>Pay $300/month</p>
+                                <p>Pay off smallest balances first</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="payoffChart"></canvas>
+                    </div>
+
+                    <div class="amortization">
+                        <h4>Payment Schedule (First 12 Months)</h4>
+                        <table class="amortization-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Payment</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="amortization-body">
+                                <!-- Amortization data will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare Strategies Tab -->
+            <div class="tab-content" id="compare-tab">
+                <div class="input-group">
+                    <label for="compare-balance">Credit Card Balance ($)</label>
+                    <input type="number" id="compare-balance" placeholder="Enter current balance" value="5000">
+                </div>
+
+                <div class="input-group">
+                    <label for="compare-apr">Annual Interest Rate (APR %)</label>
+                    <input type="number" id="compare-apr" placeholder="Enter interest rate" value="18.9" step="0.1">
+                </div>
+
+                <button class="calculate-btn" id="calculate-compare">
+                    Compare Strategies
+                </button>
+
+                <div class="results" id="compare-results">
+                    <h3>Strategy Comparison</h3>
+
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <span class="result-label">Minimum Payment</span>
+                            <div class="result-value">$100/month</div>
+                            <div class="result-label" id="min-payoff">5+ years</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Avalanche Method</span>
+                            <div class="result-value">$250/month</div>
+                            <div class="result-label" id="avalanche-payoff">2 years</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Snowball Method</span>
+                            <div class="result-value">$300/month</div>
+                            <div class="result-label" id="snowball-payoff">1.5 years</div>
+                        </div>
+
+                        <div class="result-item">
+                            <span class="result-label">Aggressive Payoff</span>
+                            <div class="result-value">$500/month</div>
+                            <div class="result-label" id="aggressive-payoff">11 months</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="compareChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="explanation">
+                <h4>About Credit Card Payoff</h4>
+                <p>Credit card debt can be expensive due to high interest rates. This calculator helps you understand
+                    how long it will take to pay off your balance and how much interest you'll pay. The avalanche method
+                    focuses on paying off debts with the highest interest rates first, while the snowball method focuses
+                    on paying off smallest balances first for psychological wins. Making more than the minimum payment
+                    can significantly reduce the time and interest paid.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Calculator Hub &copy; 2025. All rights reserved.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Deactivate all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    
+                    // Activate current tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            // Set up plan options
+            const planOptions = document.querySelectorAll('.plan-option');
+            planOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    planOptions.forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const paymentAmount = this.getAttribute('data-payment');
+                    document.getElementById('payment').value = paymentAmount;
+                    document.getElementById('payment-slider').value = paymentAmount;
+                    
+                    calculatePayoff();
+                });
+            });
+            
+            // Set up sliders
+            const balanceSlider = document.getElementById('balance-slider');
+            const aprSlider = document.getElementById('apr-slider');
+            const paymentSlider = document.getElementById('payment-slider');
+            
+            const balanceInput = document.getElementById('balance');
+            const aprInput = document.getElementById('apr');
+            const paymentInput = document.getElementById('payment');
+            
+            // Sync sliders with input fields
+            balanceSlider.addEventListener('input', function() {
+                balanceInput.value = this.value;
+                calculatePayoff();
+            });
+            
+            aprSlider.addEventListener('input', function() {
+                aprInput.value = this.value;
+                calculatePayoff();
+            });
+            
+            paymentSlider.addEventListener('input', function() {
+                paymentInput.value = this.value;
+                calculatePayoff();
+            });
+            
+            // Sync input fields with sliders
+            balanceInput.addEventListener('input', function() {
+                balanceSlider.value = this.value;
+                calculatePayoff();
+            });
+            
+            aprInput.addEventListener('input', function() {
+                aprSlider.value = this.value;
+                calculatePayoff();
+            });
+            
+            paymentInput.addEventListener('input', function() {
+                paymentSlider.value = this.value;
+                calculatePayoff();
+            });
+            
+            // Calculate payoff on button click
+            document.getElementById('calculate-payoff').addEventListener('click', calculatePayoff);
+            
+            // Calculate comparison on button click
+            document.getElementById('calculate-compare').addEventListener('click', calculateComparison);
+            
+            // Calculate payoff on page load
+            calculatePayoff();
+            
+            function calculatePayoff() {
+                const balance = parseFloat(balanceInput.value);
+                const apr = parseFloat(aprInput.value) / 100;
+                const monthlyPayment = parseFloat(paymentInput.value);
+                
+                if (isNaN(balance) || isNaN(apr) || isNaN(monthlyPayment) || 
+                    balance <= 0 || apr < 0 || monthlyPayment <= 0) {
+                    alert('Please enter valid values for all fields');
+                    return;
+                }
+                
+                const monthlyRate = apr / 12;
+                let currentBalance = balance;
+                let totalInterest = 0;
+                let month = 0;
+                
+                // Calculate months to payoff
+                if (monthlyPayment <= currentBalance * monthlyRate) {
+                    alert('Your payment is too low to pay off the debt. Please increase your monthly payment.');
+                    return;
+                }
+                
+                const amortizationData = [];
+                
+                while (currentBalance > 0) {
+                    month++;
+                    const interestPayment = currentBalance * monthlyRate;
+                    let principalPayment = monthlyPayment - interestPayment;
+                    
+                    if (principalPayment > currentBalance) {
+                        principalPayment = currentBalance;
+                    }
+                    
+                    currentBalance -= principalPayment;
+                    totalInterest += interestPayment;
+                    
+                    // Store data for first 12 months
+                    if (month <= 12) {
+                        amortizationData.push({
+                            month: month,
+                            payment: monthlyPayment,
+                            principal: principalPayment,
+                            interest: interestPayment,
+                            balance: currentBalance
+                        });
+                    }
+                }
+                
+                const totalPayment = balance + totalInterest;
+                
+                // Calculate payoff date
+                const today = new Date();
+                const payoffDate = new Date(today);
+                payoffDate.setMonth(payoffDate.getMonth() + month);
+                
+                // Format currency
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                });
+                
+                // Update results
+                document.getElementById('payoff-time').textContent = `${month} months (${(month/12).toFixed(1)} years)`;
+                document.getElementById('total-interest').textContent = formatter.format(totalInterest);
+                document.getElementById('total-payment').textContent = formatter.format(totalPayment);
+                document.getElementById('payoff-date').textContent = payoffDate.toLocaleDateString();
+                
+                // Update amortization table
+                updateAmortizationTable(amortizationData);
+                
+                // Create chart
+                createPayoffChart(balance, totalInterest);
+            }
+            
+            function updateAmortizationTable(data) {
+                const amortizationBody = document.getElementById('amortization-body');
+                amortizationBody.innerHTML = '';
+                
+                const formatter = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                });
+                
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.month}</td>
+                        <td>${formatter.format(row.payment)}</td>
+                        <td>${formatter.format(row.principal)}</td>
+                        <td>${formatter.format(row.interest)}</td>
+                        <td>${formatter.format(row.balance)}</td>
+                    `;
+                    amortizationBody.appendChild(tr);
+                });
+            }
+            
+            function createPayoffChart(principal, interest) {
+                const ctx = document.getElementById('payoffChart').getContext('2d');
+                
+                if (window.payoffChart) {
+                    window.payoffChart.destroy();
+                }
+                
+                window.payoffChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Principal', 'Interest'],
+                        datasets: [{
+                            data: [principal, interest],
+                            backgroundColor: ['#2575fc', '#6a11cb'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return `${label}: ${formatter.format(value)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function calculateComparison() {
+                const balance = parseFloat(document.getElementById('compare-balance').value);
+                const apr = parseFloat(document.getElementById('compare-apr').value) / 100;
+                
+                if (isNaN(balance) || isNaN(apr) || balance <= 0 || apr < 0) {
+                    alert('Please enter valid values for all fields');
+                    return;
+                }
+                
+                const monthlyRate = apr / 12;
+                
+                // Calculate different payoff scenarios
+                const minPayment = Math.max(25, balance * 0.02); // Minimum payment (2% of balance or $25)
+                const avalanchePayment = 250; // Avalanche method payment
+                const snowballPayment = 300; // Snowball method payment
+                const aggressivePayment = 500; // Aggressive payment
+                
+                // Calculate months for each strategy
+                const minMonths = calculateMonthsToPayoff(balance, monthlyRate, minPayment);
+                const avalancheMonths = calculateMonthsToPayoff(balance, monthlyRate, avalanchePayment);
+                const snowballMonths = calculateMonthsToPayoff(balance, monthlyRate, snowballPayment);
+                const aggressiveMonths = calculateMonthsToPayoff(balance, monthlyRate, aggressivePayment);
+                
+                // Update results
+                document.getElementById('min-payoff').textContent = `${minMonths} months (${(minMonths/12).toFixed(1)} years)`;
+                document.getElementById('avalanche-payoff').textContent = `${avalancheMonths} months (${(avalancheMonths/12).toFixed(1)} years)`;
+                document.getElementById('snowball-payoff').textContent = `${snowballMonths} months (${(snowballMonths/12).toFixed(1)} years)`;
+                document.getElementById('aggressive-payoff').textContent = `${aggressiveMonths} months (${(aggressiveMonths/12).toFixed(1)} years)`;
+                
+                // Create comparison chart
+                createComparisonChart([minMonths, avalancheMonths, snowballMonths, aggressiveMonths]);
+            }
+            
+            function calculateMonthsToPayoff(balance, monthlyRate, monthlyPayment) {
+                let currentBalance = balance;
+                let months = 0;
+                
+                if (monthlyPayment <= currentBalance * monthlyRate) {
+                    return 999; // Payment too low
+                }
+                
+                while (currentBalance > 0) {
+                    months++;
+                    const interestPayment = currentBalance * monthlyRate;
+                    let principalPayment = monthlyPayment - interestPayment;
+                    
+                    if (principalPayment > currentBalance) {
+                        principalPayment = currentBalance;
+                    }
+                    
+                    currentBalance -= principalPayment;
+                }
+                
+                return months;
+            }
+            
+            function createComparisonChart(monthsData) {
+                const ctx = document.getElementById('compareChart').getContext('2d');
+                
+                if (window.compareChart) {
+                    window.compareChart.destroy();
+                }
+                
+                window.compareChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Minimum Payment', 'Avalanche Method', 'Snowball Method', 'Aggressive Payoff'],
+                        datasets: [{
+                            label: 'Months to Pay Off',
+                            data: monthsData,
+                            backgroundColor: ['#2575fc', '#6a11cb', '#4cd964', '#ff9500'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Months'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Months: ${context.raw}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Format currency for chart tooltips
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            });
+        });
+    </script>
+    <!-- home button -->
+    <script>
+        (function(){
+    // Create container anchor
+    const a = document.createElement('a');
+    a.href = '/'; // change home URL if needed
+    a.title = 'Back to Home';
+    a.style.cssText = `
+        position: fixed;
+        right: 100px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        transition: transform .12s ease, box-shadow .12s ease;
+    `;
+    a.onmousedown = ()=>a.style.transform='scale(.96)';
+    a.onmouseup = ()=>a.style.transform='scale(1)';
+
+    // Create SVG icon
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+    svg.style.width = '24px';
+    svg.style.height = '24px';
+    svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+    // Create text span
+    const span = document.createElement('span');
+    span.textContent = 'Back to Home';
+
+    a.appendChild(svg);
+    a.appendChild(span);
+    document.body.appendChild(a);
+})();
+    </script>
+</body>
+
+</html>

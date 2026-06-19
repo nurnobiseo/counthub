@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Tip Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6a11cb;
+        }
+        
+        .tip-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tip-option {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .tip-option:hover {
+            background: #e9ecef;
+        }
+        
+        .tip-option.active {
+            background: #6a11cb;
+            color: white;
+            border-color: #6a11cb;
+        }
+        
+        .custom-tip {
+            grid-column: span 3;
+            display: flex;
+            align-items: center;
+        }
+        
+        .custom-tip input {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .custom-tip span {
+            background: #f8f9fa;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            font-weight: 600;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-line:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #6a11cb;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .split-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .split-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .split-btn:hover {
+            background: #dee2e6;
+        }
+        
+        .split-value {
+            margin: 0 15px;
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .tip-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .custom-tip {
+                grid-column: span 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-receipt"></i>
+        </div>
+        <h1>Tip Calculator</h1>
+        <p class="subtitle">Calculate your tip and split the bill with friends</p>
+        
+        <div class="input-group">
+            <label for="bill-amount">Bill Amount</label>
+            <input type="number" id="bill-amount" placeholder="Enter bill amount" min="0" step="0.01">
+        </div>
+        
+        <div class="input-group">
+            <label>Select Tip Percentage</label>
+            <div class="tip-options">
+                <div class="tip-option" data-value="10">10%</div>
+                <div class="tip-option" data-value="15">15%</div>
+                <div class="tip-option" data-value="18">18%</div>
+                <div class="tip-option" data-value="20">20%</div>
+                <div class="tip-option" data-value="22">22%</div>
+                <div class="tip-option active" data-value="25">25%</div>
+                <div class="custom-tip">
+                    <span>Custom</span>
+                    <input type="number" id="custom-tip" placeholder="Enter %" min="0" step="0.1">
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label for="people">Number of People</label>
+            <div class="split-container">
+                <button class="split-btn" id="decrease-people">-</button>
+                <div class="split-value" id="people-value">1</div>
+                <button class="split-btn" id="increase-people">+</button>
+            </div>
+        </div>
+        
+        <button class="calculate-btn" id="calculate">Calculate Tip</button>
+        
+        <div class="results">
+            <div class="result-line">
+                <div>Tip Amount:</div>
+                <div id="tip-amount">$0.00</div>
+            </div>
+            <div class="result-line">
+                <div>Total Bill:</div>
+                <div id="total-bill">$0.00</div>
+            </div>
+            <div class="result-line">
+                <div>Each Person Pays:</div>
+                <div id="per-person">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const billAmountInput = document.getElementById('bill-amount');
+            const customTipInput = document.getElementById('custom-tip');
+            const tipOptions = document.querySelectorAll('.tip-option');
+            const peopleValue = document.getElementById('people-value');
+            const decreasePeopleBtn = document.getElementById('decrease-people');
+            const increasePeopleBtn = document.getElementById('increase-people');
+            const calculateBtn = document.getElementById('calculate');
+            const tipAmountEl = document.getElementById('tip-amount');
+            const totalBillEl = document.getElementById('total-bill');
+            const perPersonEl = document.getElementById('per-person');
+            
+            let selectedTipValue = 25;
+            let peopleCount = 1;
+            
+            // Set tip option as active
+            tipOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    tipOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedTipValue = parseFloat(this.getAttribute('data-value'));
+                    customTipInput.value = '';
+                });
+            });
+            
+            // Custom tip input
+            customTipInput.addEventListener('click', function() {
+                tipOptions.forEach(opt => opt.classList.remove('active'));
+            });
+            
+            customTipInput.addEventListener('input', function() {
+                if (this.value) {
+                    selectedTipValue = parseFloat(this.value);
+                }
+            });
+            
+            // People count adjustment
+            decreasePeopleBtn.addEventListener('click', function() {
+                if (peopleCount > 1) {
+                    peopleCount--;
+                    peopleValue.textContent = peopleCount;
+                }
+            });
+            
+            increasePeopleBtn.addEventListener('click', function() {
+                peopleCount++;
+                peopleValue.textContent = peopleCount;
+            });
+            
+            // Calculate tip
+            calculateBtn.addEventListener('click', function() {
+                const billAmount = parseFloat(billAmountInput.value);
+                
+                if (isNaN(billAmount) || billAmount <= 0) {
+                    alert('Please enter a valid bill amount');
+                    return;
+                }
+                
+                const tipAmount = billAmount * (selectedTipValue / 100);
+                const totalBill = billAmount + tipAmount;
+                const perPerson = totalBill / peopleCount;
+                
+                tipAmountEl.textContent = `$${tipAmount.toFixed(2)}`;
+                totalBillEl.textContent = `$${totalBill.toFixed(2)}`;
+                perPersonEl.textContent = `$${perPerson.toFixed(2)}`;
+            });
+            
+            // Set default tip percentage
+            tipOptions[5].classList.add('active');
+        });
+    </script>
+     <!-- home button -->
+  <script>
+(function(){
+    // Create container anchor
+    const a = document.createElement('a');
+    a.href = '/'; // change home URL if needed
+    a.title = 'Back to Home';
+    a.style.cssText = `
+        position: fixed;
+        right: 100px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        transition: transform .12s ease, box-shadow .12s ease;
+    `;
+    a.onmousedown = ()=>a.style.transform='scale(.96)';
+    a.onmouseup = ()=>a.style.transform='scale(1)';
+
+    // Create SVG icon
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+    svg.style.width = '24px';
+    svg.style.height = '24px';
+    svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+    // Create text span
+    const span = document.createElement('span');
+    span.textContent = 'Back to Home';
+
+    a.appendChild(svg);
+    a.appendChild(span);
+    document.body.appendChild(a);
+})();
+</script>
+</body>
+</html>

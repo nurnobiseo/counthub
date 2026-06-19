@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydration Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #0066cc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #0066cc;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .description {
+            color: #4da6ff;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0066cc;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #99ccff;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #0066cc;
+            background-color: #f0f9ff;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+        
+        .calculate-btn {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .calculate-btn:hover {
+            background-color: #004d99;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .result h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+        
+        .water-amount {
+            font-size: 42px;
+            font-weight: bold;
+            color: #0066cc;
+            margin: 15px 0;
+        }
+        
+        .cups-visualization {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .cup {
+            width: 50px;
+            height: 70px;
+            background-color: #99ccff;
+            border-radius: 0 0 15px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cup:after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 5px;
+            right: 5px;
+            bottom: 10px;
+            background-color: #e6f7ff;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .hydration-tips {
+            text-align: left;
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f0f9ff;
+            border-radius: 10px;
+        }
+        
+        .hydration-tips h3 {
+            margin-bottom: 10px;
+            color: #0066cc;
+        }
+        
+        .hydration-tips ul {
+            padding-left: 20px;
+            color: #4da6ff;
+        }
+        
+        .hydration-tips li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #4da6ff;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💧 Water Intake Calculator</h1>
+        <p class="description">Calculate your recommended daily water intake based on your body weight and activity level.</p>
+        
+        <div class="input-group">
+            <label for="weight">Your Weight (kg)</label>
+            <input type="number" id="weight" placeholder="Enter your weight in kilograms" min="1">
+        </div>
+        
+        <div class="input-group">
+            <label for="activity">Activity Level</label>
+            <select id="activity">
+                <option value="1.2">Sedentary (little or no exercise)</option>
+                <option value="1.375">Lightly active (light exercise 1-3 days/week)</option>
+                <option value="1.55" selected>Moderately active (moderate exercise 3-5 days/week)</option>
+                <option value="1.725">Very active (hard exercise 6-7 days/week)</option>
+                <option value="1.9">Extremely active (very hard exercise, physical job)</option>
+            </select>
+        </div>
+        
+        <button class="calculate-btn" onclick="calculateWater()">Calculate My Water Intake</button>
+        
+        <div class="result" id="result">
+            <h3>Your Recommended Daily Water Intake</h3>
+            <div class="water-amount" id="waterAmount">0</div>
+            <p>liters per day</p>
+            
+            <div class="cups-visualization">
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+                <div class="cup"></div>
+            </div>
+        </div>
+        
+        <div class="hydration-tips">
+            <h3>💡 Hydration Tips</h3>
+            <ul>
+                <li>Drink a glass of water first thing in the morning</li>
+                <li>Keep a water bottle with you throughout the day</li>
+                <li>Drink before, during, and after physical activity</li>
+                <li>Monitor the color of your urine - pale yellow means you're well hydrated</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>Stay hydrated and healthy! 💦</p>
+        </footer>
+    </div>
+
+    <script>
+        function calculateWater() {
+            // Get input values
+            const weight = parseFloat(document.getElementById('weight').value);
+            const activityLevel = parseFloat(document.getElementById('activity').value);
+            
+            // Validate input
+            if (isNaN(weight) || weight <= 0) {
+                alert('Please enter a valid weight');
+                return;
+            }
+            
+            // Calculate water intake (simplified formula: 35ml per kg of body weight adjusted by activity level)
+            const waterML = weight * 35 * activityLevel;
+            const waterLiters = (waterML / 1000).toFixed(2);
+            
+            // Display result
+            document.getElementById('waterAmount').textContent = waterLiters;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+     <script>
+(function(){
+    // Create container anchor
+    const a = document.createElement('a');
+    a.href = '/'; // change home URL if needed
+    a.title = 'Back to Home';
+    a.style.cssText = `
+        position: fixed;
+        right: 100px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        transition: transform .12s ease, box-shadow .12s ease;
+    `;
+    a.onmousedown = ()=>a.style.transform='scale(.96)';
+    a.onmouseup = ()=>a.style.transform='scale(1)';
+
+    // Create SVG icon
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+    svg.style.width = '24px';
+    svg.style.height = '24px';
+    svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+    // Create text span
+    const span = document.createElement('span');
+    span.textContent = 'Back to Home';
+
+    a.appendChild(svg);
+    a.appendChild(span);
+    document.body.appendChild(a);
+})();
+</script>
+</body>
+</html>

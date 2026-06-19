@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Length Converter Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .converter {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-group {
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .input-with-unit {
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6a11cb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.3);
+        }
+        
+        .unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6a11cb;
+            font-weight: 600;
+        }
+        
+        .convert-btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            display: none;
+            text-align: center;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .converted-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        
+        .length-unit {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .length-unit h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .length-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .common-lengths {
+            text-align: left;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .common-lengths h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .common-lengths ul {
+            padding-left: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .common-lengths li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .icon {
+            font-size: 24px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-ruler-combined"></i> Length Converter</h1>
+        <p class="description">Easily convert between different units of length - meters, kilometers, miles, feet, and inches.</p>
+        
+        <div class="converter">
+            <div class="input-group">
+                <label for="length"><i class="fas fa-ruler"></i> Length Value</label>
+                <div class="input-with-unit">
+                    <input type="number" id="length" placeholder="Enter length" step="0.1" min="0">
+                    <span class="unit" id="inputUnit">m</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="fromUnit"><i class="fas fa-exchange-alt"></i> Convert From</label>
+                <select id="fromUnit" onchange="updateInputUnit()">
+                    <option value="m">Meters (m)</option>
+                    <option value="km">Kilometers (km)</option>
+                    <option value="mi">Miles (mi)</option>
+                    <option value="ft">Feet (ft)</option>
+                    <option value="in">Inches (in)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="toUnit"><i class="fas fa-long-arrow-alt-right"></i> Convert To</label>
+                <select id="toUnit">
+                    <option value="ft">Feet (ft)</option>
+                    <option value="m">Meters (m)</option>
+                    <option value="km">Kilometers (km)</option>
+                    <option value="mi">Miles (mi)</option>
+                    <option value="in">Inches (in)</option>
+                </select>
+            </div>
+            
+            <button class="convert-btn" onclick="convertLength()">
+                <i class="fas fa-sync-alt"></i> Convert Length
+            </button>
+        </div>
+        
+        <div class="result" id="result">
+            <h3><i class="fas fa-ruler-horizontal"></i> Conversion Result</h3>
+            <div class="converted-value" id="convertedValue">0</div>
+            <p id="conversionFormula"></p>
+            
+            <div class="comparison">
+                <div class="length-unit">
+                    <h4>Meters</h4>
+                    <div class="length-value" id="mValue">0 m</div>
+                </div>
+                <div class="length-unit">
+                    <h4>Kilometers</h4>
+                    <div class="length-value" id="kmValue">0 km</div>
+                </div>
+                <div class="length-unit">
+                    <h4>Miles</h4>
+                    <div class="length-value" id="miValue">0 mi</div>
+                </div>
+                <div class="length-unit">
+                    <h4>Feet</h4>
+                    <div class="length-value" id="ftValue">0 ft</div>
+                </div>
+                <div class="length-unit">
+                    <h4>Inches</h4>
+                    <div class="length-value" id="inValue">0 in</div>
+                </div>
+            </div>
+            
+            <div class="common-lengths">
+                <h3><i class="fas fa-info-circle"></i> Common Length References</h3>
+                <ul>
+                    <li>1 meter = 3.28084 feet</li>
+                    <li>1 kilometer = 0.621371 miles</li>
+                    <li>1 mile = 1.60934 kilometers</li>
+                    <li>1 foot = 12 inches</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Note: This converter uses standard length conversion ratios.</p>
+        </footer>
+    </div>
+
+    <script>
+        function updateInputUnit() {
+            const fromUnit = document.getElementById('fromUnit').value;
+            const inputUnit = document.getElementById('inputUnit');
+            
+            inputUnit.textContent = fromUnit;
+        }
+        
+        function convertLength() {
+            // Get input values
+            const lengthInput = parseFloat(document.getElementById('length').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            
+            // Validate input
+            if (isNaN(lengthInput) || lengthInput < 0) {
+                alert('Please enter a valid length value');
+                return;
+            }
+            
+            let meters, kilometers, miles, feet, inches;
+            let formula = "";
+            
+            // Convert input to meters first
+            if (fromUnit === 'm') {
+                meters = lengthInput;
+                formula = `${lengthInput} m = `;
+            } else if (fromUnit === 'km') {
+                meters = lengthInput * 1000;
+                formula = `${lengthInput} km × 1000 = `;
+            } else if (fromUnit === 'mi') {
+                meters = lengthInput * 1609.34;
+                formula = `${lengthInput} mi × 1609.34 = `;
+            } else if (fromUnit === 'ft') {
+                meters = lengthInput * 0.3048;
+                formula = `${lengthInput} ft × 0.3048 = `;
+            } else {
+                meters = lengthInput * 0.0254;
+                formula = `${lengthInput} in × 0.0254 = `;
+            }
+            
+            // Convert meters to other units
+            kilometers = meters / 1000;
+            miles = meters / 1609.34;
+            feet = meters / 0.3048;
+            inches = meters / 0.0254;
+            
+            // Calculate the target conversion
+            let result;
+            if (toUnit === 'm') {
+                result = meters;
+                formula += `${result.toFixed(2)} m`;
+            } else if (toUnit === 'km') {
+                result = kilometers;
+                formula += `${result.toFixed(2)} km`;
+            } else if (toUnit === 'mi') {
+                result = miles;
+                formula += `${result.toFixed(2)} mi`;
+            } else if (toUnit === 'ft') {
+                result = feet;
+                formula += `${result.toFixed(2)} ft`;
+            } else {
+                result = inches;
+                formula += `${result.toFixed(2)} in`;
+            }
+            
+            // Display result
+            document.getElementById('convertedValue').textContent = `${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('conversionFormula').textContent = formula;
+            
+            // Update comparison values
+            document.getElementById('mValue').textContent = `${meters.toFixed(2)} m`;
+            document.getElementById('kmValue').textContent = `${kilometers.toFixed(6)} km`;
+            document.getElementById('miValue').textContent = `${miles.toFixed(6)} mi`;
+            document.getElementById('ftValue').textContent = `${feet.toFixed(2)} ft`;
+            document.getElementById('inValue').textContent = `${inches.toFixed(2)} in`;
+            
+            // Show result
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Set default values on load
+        window.onload = function() {
+            document.getElementById('length').value = 1;
+            updateInputUnit();
+        };
+    </script>
+
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 100px;
+                bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+</body>
+</html>

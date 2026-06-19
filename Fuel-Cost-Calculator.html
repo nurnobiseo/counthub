@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuel Cost Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6a11cb;
+        }
+        
+        .units-toggle {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .unit-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .unit-btn.active {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-line:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #6a11cb;
+        }
+        
+        .fuel-icon {
+            color: #6a11cb;
+            margin-right: 10px;
+        }
+        
+        .comparison {
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        
+        .comparison h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-gas-pump"></i>
+        </div>
+        <h1>Fuel Cost Calculator</h1>
+        <p class="subtitle">Calculate your trip fuel cost and consumption</p>
+        
+        <div class="units-toggle">
+            <div class="unit-btn active" id="metric-btn">Metric System</div>
+            <div class="unit-btn" id="imperial-btn">Imperial System</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="distance" id="distance-label">Distance (km)</label>
+            <input type="number" id="distance" placeholder="Enter distance" min="0" step="0.1">
+        </div>
+        
+        <div class="input-group">
+            <label for="fuel-efficiency" id="efficiency-label">Fuel Efficiency (km/L)</label>
+            <input type="number" id="fuel-efficiency" placeholder="Enter fuel efficiency" min="0" step="0.1">
+        </div>
+        
+        <div class="input-group">
+            <label for="fuel-price">Fuel Price (per liter)</label>
+            <input type="number" id="fuel-price" placeholder="Enter fuel price" min="0" step="0.01">
+        </div>
+        
+        <button class="calculate-btn" id="calculate"><i class="fas fa-calculator"></i> Calculate Fuel Cost</button>
+        
+        <div class="results">
+            <div class="result-line">
+                <div><i class="fas fa-road fuel-icon"></i> Fuel Needed:</div>
+                <div id="fuel-needed">0 L</div>
+            </div>
+            <div class="result-line">
+                <div><i class="fas fa-money-bill-wave fuel-icon"></i> Total Cost:</div>
+                <div id="total-cost">$0.00</div>
+            </div>
+            <div class="result-line">
+                <div><i class="fas fa-gas-pump fuel-icon"></i> Cost per km:</div>
+                <div id="cost-per-km">$0.00</div>
+            </div>
+        </div>
+        
+        <div class="comparison">
+            <h3><i class="fas fa-chart-bar"></i> Fuel Efficiency Comparison</h3>
+            <div class="comparison-item">
+                <div>Your vehicle:</div>
+                <div id="comparison-your">0 km/L</div>
+            </div>
+            <div class="comparison-item">
+                <div>Average car (12 km/L):</div>
+                <div id="comparison-average">$0.00</div>
+            </div>
+            <div class="comparison-item">
+                <div>Efficient car (18 km/L):</div>
+                <div id="comparison-efficient">$0.00</div>
+            </div>
+            <div class="comparison-item">
+                <div>Hybrid car (23 km/L):</div>
+                <div id="comparison-hybrid">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button Script -->
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 100px;
+                bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+
+    <!-- Fuel Calculator Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const metricBtn = document.getElementById('metric-btn');
+            const imperialBtn = document.getElementById('imperial-btn');
+            const distanceInput = document.getElementById('distance');
+            const distanceLabel = document.getElementById('distance-label');
+            const efficiencyInput = document.getElementById('fuel-efficiency');
+            const efficiencyLabel = document.getElementById('efficiency-label');
+            const fuelPriceInput = document.getElementById('fuel-price');
+            const calculateBtn = document.getElementById('calculate');
+            const fuelNeededEl = document.getElementById('fuel-needed');
+            const totalCostEl = document.getElementById('total-cost');
+            const costPerKmEl = document.getElementById('cost-per-km');
+            const comparisonYourEl = document.getElementById('comparison-your');
+            const comparisonAverageEl = document.getElementById('comparison-average');
+            const comparisonEfficientEl = document.getElementById('comparison-efficient');
+            const comparisonHybridEl = document.getElementById('comparison-hybrid');
+            
+            let isMetric = true;
+            
+            // Toggle between metric and imperial units
+            metricBtn.addEventListener('click', function() {
+                if (!isMetric) {
+                    isMetric = true;
+                    metricBtn.classList.add('active');
+                    imperialBtn.classList.remove('active');
+                    distanceLabel.textContent = 'Distance (km)';
+                    efficiencyLabel.textContent = 'Fuel Efficiency (km/L)';
+                    fuelPriceInput.placeholder = 'Enter fuel price (per liter)';
+                }
+            });
+            
+            imperialBtn.addEventListener('click', function() {
+                if (isMetric) {
+                    isMetric = false;
+                    imperialBtn.classList.add('active');
+                    metricBtn.classList.remove('active');
+                    distanceLabel.textContent = 'Distance (miles)';
+                    efficiencyLabel.textContent = 'Fuel Efficiency (mpg)';
+                    fuelPriceInput.placeholder = 'Enter fuel price (per gallon)';
+                }
+            });
+            
+            // Calculate fuel cost
+            calculateBtn.addEventListener('click', function() {
+                const distance = parseFloat(distanceInput.value);
+                const fuelEfficiency = parseFloat(efficiencyInput.value);
+                const fuelPrice = parseFloat(fuelPriceInput.value);
+                
+                if (isNaN(distance) || distance <= 0) {
+                    alert('Please enter a valid distance');
+                    return;
+                }
+                
+                if (isNaN(fuelEfficiency) || fuelEfficiency <= 0) {
+                    alert('Please enter a valid fuel efficiency');
+                    return;
+                }
+                
+                if (isNaN(fuelPrice) || fuelPrice <= 0) {
+                    alert('Please enter a valid fuel price');
+                    return;
+                }
+                
+                let fuelNeeded, totalCost, costPerUnitDistance;
+                
+                if (isMetric) {
+                    // Metric calculation (km and liters)
+                    fuelNeeded = distance / fuelEfficiency;
+                    totalCost = fuelNeeded * fuelPrice;
+                    costPerUnitDistance = totalCost / distance;
+                    
+                    fuelNeededEl.textContent = `${fuelNeeded.toFixed(2)} L`;
+                    costPerKmEl.textContent = `$${costPerUnitDistance.toFixed(2)}`;
+                    
+                    // Comparison for metric
+                    comparisonYourEl.textContent = `${fuelEfficiency} km/L`;
+                    comparisonAverageEl.textContent = `$${(distance / 12 * fuelPrice).toFixed(2)}`;
+                    comparisonEfficientEl.textContent = `$${(distance / 18 * fuelPrice).toFixed(2)}`;
+                    comparisonHybridEl.textContent = `$${(distance / 23 * fuelPrice).toFixed(2)}`;
+                } else {
+                    // Imperial calculation (miles and gallons)
+                    fuelNeeded = distance / fuelEfficiency;
+                    totalCost = fuelNeeded * fuelPrice;
+                    costPerUnitDistance = totalCost / distance;
+                    
+                    fuelNeededEl.textContent = `${fuelNeeded.toFixed(2)} gallons`;
+                    costPerKmEl.textContent = `$${costPerUnitDistance.toFixed(2)} per mile`;
+                    
+                    // Comparison for imperial
+                    comparisonYourEl.textContent = `${fuelEfficiency} mpg`;
+                    comparisonAverageEl.textContent = `$${(distance / 20 * fuelPrice).toFixed(2)}`;
+                    comparisonEfficientEl.textContent = `$${(distance / 30 * fuelPrice).toFixed(2)}`;
+                    comparisonHybridEl.textContent = `$${(distance / 40 * fuelPrice).toFixed(2)}`;
+                }
+                
+                totalCostEl.textContent = `$${totalCost.toFixed(2)}`;
+            });
+            
+            // Initialize with example values
+            distanceInput.value = "100";
+            efficiencyInput.value = "12";
+            fuelPriceInput.value = "1.50";
+            
+            // Calculate initial values
+            calculateBtn.click();
+        });
+    </script>
+</body>
+</html>

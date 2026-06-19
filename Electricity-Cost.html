@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Cost Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .calculator-type {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .calc-type-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .calc-type-btn.active {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #6a11cb;
+        }
+        
+        .appliance-selector {
+            margin-bottom: 20px;
+        }
+        
+        .appliance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .appliance-item:hover {
+            background: #e9ecef;
+        }
+        
+        .appliance-item.active {
+            background: #6a11cb;
+            color: white;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-line:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #6a11cb;
+        }
+        
+        .energy-icon {
+            color: #6a11cb;
+            margin-right: 10px;
+        }
+        
+        .appliance-list {
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .appliance-list h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            text-align: center;
+        }
+        
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .delete-btn {
+            color: #ff4757;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-bolt"></i>
+        </div>
+        <h1>Electricity Cost Calculator</h1>
+        <p class="subtitle">Calculate your electricity consumption and costs</p>
+        
+        <div class="calculator-type">
+            <div class="calc-type-btn active" id="single-btn">Single Appliance</div>
+            <div class="calc-type-btn" id="multiple-btn">Multiple Appliances</div>
+        </div>
+        
+        <div id="single-calc">
+            <div class="input-group">
+                <label for="power">Power Consumption (Watts)</label>
+                <input type="number" id="power" placeholder="Enter wattage" min="0" step="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="hours">Hours Used Per Day</label>
+                <input type="number" id="hours" placeholder="Enter hours" min="0" max="24" step="0.5">
+            </div>
+            
+            <div class="input-group">
+                <label for="cost">Electricity Rate (per kWh)</label>
+                <input type="number" id="cost" placeholder="Enter rate" min="0" step="0.01" value="0.15">
+            </div>
+        </div>
+        
+        <div id="multiple-calc" class="hidden">
+            <div class="appliance-selector">
+                <label>Select Appliance</label>
+                <div class="appliance-item active" data-watts="60">
+                    <div>LED Light Bulb</div>
+                    <div>60W</div>
+                </div>
+                <div class="appliance-item" data-watts="120">
+                    <div>Laptop</div>
+                    <div>120W</div>
+                </div>
+                <div class="appliance-item" data-watts="1500">
+                    <div>Heater</div>
+                    <div>1500W</div>
+                </div>
+                <div class="appliance-item" data-watts="800">
+                    <div>Microwave</div>
+                    <div>800W</div>
+                </div>
+                <div class="appliance-item" data-watts="200">
+                    <div>TV</div>
+                    <div>200W</div>
+                </div>
+                <div class="appliance-item" data-watts="5000">
+                    <div>Air Conditioner</div>
+                    <div>5000W</div>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label for="custom-watts">Or Enter Custom Wattage</label>
+                <input type="number" id="custom-watts" placeholder="Enter custom wattage" min="0" step="1">
+            </div>
+            
+            <div class="input-group">
+                <label for="appliance-hours">Hours Used Per Day</label>
+                <input type="number" id="appliance-hours" placeholder="Enter hours" min="0" max="24" step="0.5" value="4">
+            </div>
+            
+            <div class="input-group">
+                <label for="appliance-cost">Electricity Rate (per kWh)</label>
+                <input type="number" id="appliance-cost" placeholder="Enter rate" min="0" step="0.01" value="0.15">
+            </div>
+            
+            <button class="calculate-btn" id="add-appliance"><i class="fas fa-plus"></i> Add Appliance</button>
+            
+            <div class="appliance-list">
+                <h3>Your Appliances</h3>
+                <div id="appliances-container">
+                    <!-- Appliances will be added here -->
+                    <div class="list-item">
+                        <div>No appliances added yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="calculate-btn" id="calculate"><i class="fas fa-calculator"></i> Calculate Electricity Cost</button>
+        
+        <div class="results">
+            <div class="result-line">
+                <div><i class="fas fa-bolt energy-icon"></i> Energy Consumption:</div>
+                <div id="energy-consumption">0 kWh</div>
+            </div>
+            <div class="result-line">
+                <div><i class="fas fa-money-bill-wave energy-icon"></i> Daily Cost:</div>
+                <div id="daily-cost">$0.00</div>
+            </div>
+            <div class="result-line">
+                <div><i class="fas fa-calendar-day energy-icon"></i> Monthly Cost:</div>
+                <div id="monthly-cost">$0.00</div>
+            </div>
+            <div class="result-line">
+                <div><i class="fas fa-calendar-year energy-icon"></i> Yearly Cost:</div>
+                <div id="yearly-cost">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button Script -->
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 100px;
+                bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+
+    <!-- Electricity Calculator Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const singleBtn = document.getElementById('single-btn');
+            const multipleBtn = document.getElementById('multiple-btn');
+            const singleCalc = document.getElementById('single-calc');
+            const multipleCalc = document.getElementById('multiple-calc');
+            const powerInput = document.getElementById('power');
+            const hoursInput = document.getElementById('hours');
+            const costInput = document.getElementById('cost');
+            const applianceItems = document.querySelectorAll('.appliance-item');
+            const customWattsInput = document.getElementById('custom-watts');
+            const applianceHoursInput = document.getElementById('appliance-hours');
+            const applianceCostInput = document.getElementById('appliance-cost');
+            const addApplianceBtn = document.getElementById('add-appliance');
+            const appliancesContainer = document.getElementById('appliances-container');
+            const calculateBtn = document.getElementById('calculate');
+            const energyConsumptionEl = document.getElementById('energy-consumption');
+            const dailyCostEl = document.getElementById('daily-cost');
+            const monthlyCostEl = document.getElementById('monthly-cost');
+            const yearlyCostEl = document.getElementById('yearly-cost');
+            
+            let appliances = [];
+            let selectedWatts = 60;
+            
+            // Toggle between single and multiple appliance modes
+            singleBtn.addEventListener('click', function() {
+                singleBtn.classList.add('active');
+                multipleBtn.classList.remove('active');
+                singleCalc.classList.remove('hidden');
+                multipleCalc.classList.add('hidden');
+            });
+            
+            multipleBtn.addEventListener('click', function() {
+                multipleBtn.classList.add('active');
+                singleBtn.classList.remove('active');
+                multipleCalc.classList.remove('hidden');
+                singleCalc.classList.add('hidden');
+            });
+            
+            // Select appliance from list
+            applianceItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    applianceItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedWatts = parseInt(this.getAttribute('data-watts'));
+                    customWattsInput.value = '';
+                });
+            });
+            
+            // Custom watts input
+            customWattsInput.addEventListener('input', function() {
+                if (this.value) {
+                    applianceItems.forEach(i => i.classList.remove('active'));
+                    selectedWatts = parseInt(this.value) || 0;
+                }
+            });
+            
+            // Add appliance to list
+            addApplianceBtn.addEventListener('click', function() {
+                const hours = parseFloat(applianceHoursInput.value) || 0;
+                const cost = parseFloat(applianceCostInput.value) || 0.15;
+                
+                if (selectedWatts <= 0) {
+                    alert('Please select or enter a valid wattage');
+                    return;
+                }
+                
+                if (hours <= 0 || hours > 24) {
+                    alert('Please enter valid hours (0-24)');
+                    return;
+                }
+                
+                if (cost <= 0) {
+                    alert('Please enter a valid electricity rate');
+                    return;
+                }
+                
+                appliances.push({
+                    watts: selectedWatts,
+                    hours: hours,
+                    cost: cost
+                });
+                
+                updateAppliancesList();
+            });
+            
+            // Update appliances list UI
+            function updateAppliancesList() {
+                if (appliances.length === 0) {
+                    appliancesContainer.innerHTML = '<div class="list-item"><div>No appliances added yet</div></div>';
+                    return;
+                }
+                
+                appliancesContainer.innerHTML = '';
+                appliances.forEach((appliance, index) => {
+                    const dailyKwh = (appliance.watts * appliance.hours) / 1000;
+                    const dailyCost = dailyKwh * appliance.cost;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'list-item';
+                    item.innerHTML = `
+                        <div>${appliance.watts}W × ${appliance.hours}h/day</div>
+                        <div>$${dailyCost.toFixed(2)}/day <span class="delete-btn" data-index="${index}"><i class="fas fa-trash"></i></span></div>
+                    `;
+                    appliancesContainer.appendChild(item);
+                });
+                
+                // Add delete functionality
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        appliances.splice(index, 1);
+                        updateAppliancesList();
+                    });
+                });
+            }
+            
+            // Calculate electricity cost
+            calculateBtn.addEventListener('click', function() {
+                const cost = parseFloat(costInput.value) || 0.15;
+                
+                if (singleCalc.classList.contains('hidden')) {
+                    // Multiple appliance calculation
+                    if (appliances.length === 0) {
+                        alert('Please add at least one appliance');
+                        return;
+                    }
+                    
+                    let totalDailyConsumption = 0;
+                    let totalDailyCost = 0;
+                    
+                    appliances.forEach(appliance => {
+                        const dailyKwh = (appliance.watts * appliance.hours) / 1000;
+                        const dailyCost = dailyKwh * appliance.cost;
+                        totalDailyConsumption += dailyKwh;
+                        totalDailyCost += dailyCost;
+                    });
+                    
+                    displayResults(totalDailyConsumption, totalDailyCost);
+                } else {
+                    // Single appliance calculation
+                    const power = parseFloat(powerInput.value) || 0;
+                    const hours = parseFloat(hoursInput.value) || 0;
+                    
+                    if (power <= 0) {
+                        alert('Please enter a valid power consumption');
+                        return;
+                    }
+                    
+                    if (hours <= 0 || hours > 24) {
+                        alert('Please enter valid hours (0-24)');
+                        return;
+                    }
+                    
+                    if (cost <= 0) {
+                        alert('Please enter a valid electricity rate');
+                        return;
+                    }
+                    
+                    const dailyConsumption = (power * hours) / 1000; // kWh
+                    const dailyCost = dailyConsumption * cost;
+                    
+                    displayResults(dailyConsumption, dailyCost);
+                }
+            });
+            
+            // Display results
+            function displayResults(dailyConsumption, dailyCost) {
+                energyConsumptionEl.textContent = `${dailyConsumption.toFixed(2)} kWh`;
+                dailyCostEl.textContent = `$${dailyCost.toFixed(2)}`;
+                monthlyCostEl.textContent = `$${(dailyCost * 30).toFixed(2)}`;
+                yearlyCostEl.textContent = `$${(dailyCost * 365).toFixed(2)}`;
+            }
+            
+            // Initialize with example values
+            powerInput.value = "100";
+            hoursInput.value = "5";
+            costInput.value = "0.15";
+            
+            // Calculate initial values
+            calculateBtn.click();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Hub - All Calculators in One Place</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 25px;
+            opacity: 0.9;
+        }
+
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 20px 0 30px;
+        }
+
+        .category-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .category-btn:hover, .category-btn.active {
+            background: white;
+            color: #2575fc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .calculator-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-icon {
+            background: #2575fc;
+            color: white;
+            font-size: 2.5rem;
+            padding: 25px 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .calculator-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .calculator-content h3 {
+            color: #2575fc;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .calculator-content p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #2575fc;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #1a60d0;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 40px;
+            opacity: 0.8;
+        }
+
+        .search-container {
+            margin: 20px auto;
+            max-width: 500px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 30px;
+            border: none;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .categories {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .category-btn {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculator Hub</h1>
+            <p>Your one-stop destination for all types of calculators. Select from our wide range of tools to help with math, finance, health and more.</p>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Search for calculators...">
+            </div>
+            
+            <div class="categories">
+                <button class="category-btn active" data-category="all">All Calculators</button>
+                <button class="category-btn" data-category="math">Mathematical</button>
+                <button class="category-btn" data-category="finance">Financial</button>
+                <button class="category-btn" data-category="health">Health</button>
+                <button class="category-btn" data-category="conversion">Conversion</button>
+                <button class="category-btn" data-category="date">Date & Time</button>
+                <button class="category-btn" data-category="other">Other</button>
+            </div>
+        </header>
+
+        <div class="calculator-grid">
+            <!-- Mathematical Calculators -->
+            <div class="calculator-card" data-category="math">
+                <div class="calculator-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Basic Calculator</h3>
+                    <p>Perform simple arithmetic operations like addition, subtraction, multiplication, and division.</p>
+                    <a href="Basic-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="math">
+                <div class="calculator-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Percentage Calculator</h3>
+                    <p>Calculate percentages, increases, decreases, and more with this easy-to-use tool.</p>
+                    <a href="Percentage-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="math">
+                <div class="calculator-icon">
+                    <i class="fas fa-flask"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Scientific Calculator</h3>
+                    <p>Advanced functions including trigonometric, logarithmic, and exponential calculations.</p>
+                    <a href="Scientific-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="math">
+                <div class="calculator-icon">
+                    <i class="fas fa-superscript"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Exponent Calculator</h3>
+                    <p>Calculate exponential values, powers, and roots with this powerful tool.</p>
+                    <a href="Exponent-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="math">
+                <div class="calculator-icon">
+                    <i class="fas fa-divide"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Fraction Calculator</h3>
+                    <p>Add, subtract, multiply, and divide fractions with step-by-step solutions.</p>
+                    <a href="Fraction-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <!-- Financial Calculators -->
+            <div class="calculator-card" data-category="finance">
+                <div class="calculator-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Loan Calculator</h3>
+                    <p>Calculate loan payments, interest rates, and amortization schedules.</p>
+                    <a href="Loan-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="finance">
+                <div class="calculator-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Currency Converter </h3>
+                    <p>Convert between world currencies with up-to-date exchange rates.</p>
+                    <a href="Currency-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="finance">
+                <div class="calculator-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Mortgage Calculator</h3>
+                    <p>Calculate monthly mortgage payments, interest, and total cost of home loans.</p>
+                    <a href="Mortgage-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="finance">
+                <div class="calculator-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Compound Interest</h3>
+                    <p>Calculate how your investments can grow with compound interest over time.</p>
+                    <a href="Compound-Interest-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="finance">
+                <div class="calculator-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Credit Card Payoff</h3>
+                    <p>Calculate how long it will take to pay off credit card debt with different payment strategies.</p>
+                    <a href="Credit-Card-Payoff.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <!-- Health Calculators -->
+            <div class="calculator-card" data-category="health">
+                <div class="calculator-icon">
+                    <i class="fas fa-weight"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>BMI Calculator</h3>
+                    <p>Calculate your Body Mass Index and determine if you're at a healthy weight for your height.</p>
+                    <a href="BMI-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="health">
+                <div class="calculator-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Calorie Calculator</h3>
+                    <p>Calculate your daily calorie needs based on your goals and activity level.</p>
+                    <a href="Calorie-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="health">
+                <div class="calculator-icon">
+                    <i class="fas fa-running"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Running Pace</h3>
+                    <p>Calculate your running pace, speed, or race finish time based on distance.</p>
+                    <a href="Running-Pace.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="health">
+                <div class="calculator-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Water Intake</h3>
+                    <p>Calculate how much water you should drink daily based on your weight and activity level.</p>
+                    <a href="Water-Intak.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="health">
+                <div class="calculator-icon">
+                    <i class="fas fa-baby"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Pregnancy Calculator</h3>
+                    <p>Calculate due date, current pregnancy week, and important milestones.</p>
+                    <a href="Pregnancy-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <!-- Conversion Calculators -->
+            <div class="calculator-card" data-category="conversion">
+                <div class="calculator-icon">
+                    <i class="fas fa-ruler-combined"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Unit Converter</h3>
+                    <p>Convert between different units of measurement including length, weight, volume, and temperature.</p>
+                    <a href="Unit-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="conversion">
+                <div class="calculator-icon">
+                    <i class="fas fa-temperature-high"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Temperature Converter</h3>
+                    <p>Convert between Celsius, Fahrenheit, Kelvin, and other temperature scales.</p>
+                    <a href="Temperature-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="conversion">
+                <div class="calculator-icon">
+                    <i class="fas fa-weight-hanging"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Weight Converter</h3>
+                    <p>Convert between kilograms, pounds, ounces, stones, and other weight units.</p>
+                    <a href="Weight-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="conversion">
+                <div class="calculator-icon">
+                    <i class="fas fa-ruler"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Length Converter</h3>
+                    <p>Convert between meters, feet, inches, centimeters, yards, and other length units.</p>
+                    <a href="Length-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="conversion">
+                <div class="calculator-icon">
+                    <i class="fas fa-glass-whiskey"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Cooking Converter</h3>
+                    <p>Convert between cups, teaspoons, tablespoons, milliliters, and other cooking measurements.</p>
+                    <a href="Cooking-Converter.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <!-- Date & Time Calculators -->
+            <div class="calculator-card" data-category="date">
+                <div class="calculator-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Time Calculator</h3>
+                    <p>Add, subtract, and calculate time durations between dates and times.</p>
+                    <a href="Time-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="date">
+                <div class="calculator-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Age Calculator</h3>
+                    <p>Calculate exact age in years, months, weeks, and days from any birth date.</p>
+                    <a href="Age-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="date">
+                <div class="calculator-icon">
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Date Calculator</h3>
+                    <p>Add or subtract days, weeks, months, or years from any date.</p>
+                    <a href="Date-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="date">
+                <div class="calculator-icon">
+                    <i class="fas fa-business-time"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Business Days Calculator</h3>
+                    <p>Calculate the number of business days between two dates, excluding weekends and holidays.</p>
+                    <a href="Business-Days-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="date">
+                <div class="calculator-icon">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Countdown Timer</h3>
+                    <p>Create a countdown to any future event with days, hours, minutes, and seconds.</p>
+                    <a href="Countdown-Timer.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <!-- Other Calculators -->
+            <div class="calculator-card" data-category="other">
+                <div class="calculator-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>GPA Calculator</h3>
+                    <p>Calculate your Grade Point Average based on your course grades and credit hours.</p>
+                    <a href="GPA-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="other">
+                <div class="calculator-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Tip Calculator</h3>
+                    <p>Calculate tip amounts for restaurants based on service quality and bill total.</p>
+                    <a href="Tip-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="other">
+                <div class="calculator-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Discount Calculator</h3>
+                    <p>Calculate final price after discount and how much you save on sale items.</p>
+                    <a href="Discount-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="other">
+                <div class="calculator-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Fuel Cost Calculator</h3>
+                    <p>Calculate trip fuel cost based on distance, fuel efficiency, and current gas prices.</p>
+                    <a href="Fuel-Cost-Calculator.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-category="other">
+                <div class="calculator-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="calculator-content">
+                    <h3>Electricity Cost</h3>
+                    <p>Calculate the electricity consumption and cost of your appliances and devices.</p>
+                    <a href="Electricity-Cost.html" class="btn">Use Calculator</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Calculator Hub &copy; 2023. All rights reserved.</p>
+            <p>Made for everyone who wants to calculate easily. Created by <a style="color:white; text-decoration: none;" href="https://seoservicecare.com/" target="blank">SEOServiceCare</a> </p>
+        </footer>
+    </div>
+
+    <script>
+        // Category filtering functionality
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                
+                // Show/hide calculators based on category
+                document.querySelectorAll('.calculator-card').forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Search functionality
+        const searchBox = document.querySelector('.search-box');
+        searchBox.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            document.querySelectorAll('.calculator-card').forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+
+    </script>
+</body>
+</html>

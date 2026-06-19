@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+           background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .calculator-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .calc-type {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 15px;
+        }
+        
+        .calc-type.active {
+            background: #3498db;
+            color: white;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+        }
+        
+        .calc-type:hover:not(.active) {
+            background: #e8f4fc;
+        }
+        
+        .calculator-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #calculate {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #calculate:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        
+        #reset {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        #reset:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            display: none;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .result-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .result-item {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .result-item h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .result-item p {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+            
+            .calculator-types {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .result-content {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-calculator"></i> Financial Calculator</h1>
+        
+        <div class="calculator-types">
+            <button class="calc-type active" data-type="loan">Loan Calculator</button>
+            <button class="calc-type" data-type="compound">Compound Interest</button>
+            <button class="calc-type" data-type="savings">Savings Goal</button>
+            <button class="calc-type" data-type="investment">Investment Return</button>
+        </div>
+        
+        <div class="calculator-card">
+            <div class="input-group">
+                <label for="loan-amount">Loan Amount ($):</label>
+                <input type="number" id="loan-amount" placeholder="Enter loan amount" value="10000">
+            </div>
+            
+            <div class="input-group">
+                <label for="interest-rate">Annual Interest Rate (%):</label>
+                <input type="number" id="interest-rate" placeholder="Enter interest rate" value="5" step="0.1">
+            </div>
+            
+            <div class="input-group">
+                <label for="loan-term">Loan Term (years):</label>
+                <input type="number" id="loan-term" placeholder="Enter loan term" value="5">
+            </div>
+            
+            <div class="input-group" id="compound-frequency-group" style="display: none;">
+                <label for="compound-frequency">Compound Frequency:</label>
+                <select id="compound-frequency">
+                    <option value="1">Annually</option>
+                    <option value="2">Semi-Annually</option>
+                    <option value="4">Quarterly</option>
+                    <option value="12" selected>Monthly</option>
+                    <option value="365">Daily</option>
+                </select>
+            </div>
+            
+            <div class="input-group" id="monthly-deposit-group" style="display: none;">
+                <label for="monthly-deposit">Monthly Deposit ($):</label>
+                <input type="number" id="monthly-deposit" placeholder="Enter monthly deposit" value="100">
+            </div>
+            
+            <div class="input-group" id="current-savings-group" style="display: none;">
+                <label for="current-savings">Current Savings ($):</label>
+                <input type="number" id="current-savings" placeholder="Enter current savings" value="5000">
+            </div>
+            
+            <div class="input-group" id="target-amount-group" style="display: none;">
+                <label for="target-amount">Target Amount ($):</label>
+                <input type="number" id="target-amount" placeholder="Enter target amount" value="20000">
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="calculate"><i class="fas fa-calculator"></i> Calculate</button>
+            <button id="reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        
+        <div class="result" id="result">
+            <h3><i class="fas fa-chart-line"></i> Calculation Results</h3>
+            <div class="result-content">
+                <div class="result-item">
+                    <h4>Monthly Payment</h4>
+                    <p id="monthly-payment">$0.00</p>
+                </div>
+                <div class="result-item">
+                    <h4>Total Payment</h4>
+                    <p id="total-payment">$0.00</p>
+                </div>
+                <div class="result-item">
+                    <h4>Total Interest</h4>
+                    <p id="total-interest">$0.00</p>
+                </div>
+                <div class="result-item">
+                    <h4>Time to Goal</h4>
+                    <p id="time-to-goal">0 years</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calcTypes = document.querySelectorAll('.calc-type');
+            const loanAmount = document.getElementById('loan-amount');
+            const interestRate = document.getElementById('interest-rate');
+            const loanTerm = document.getElementById('loan-term');
+            const compoundFrequency = document.getElementById('compound-frequency');
+            const monthlyDeposit = document.getElementById('monthly-deposit');
+            const currentSavings = document.getElementById('current-savings');
+            const targetAmount = document.getElementById('target-amount');
+            const calculateButton = document.getElementById('calculate');
+            const resetButton = document.getElementById('reset');
+            const resultDiv = document.getElementById('result');
+            
+            // Input groups for toggling
+            const compoundFrequencyGroup = document.getElementById('compound-frequency-group');
+            const monthlyDepositGroup = document.getElementById('monthly-deposit-group');
+            const currentSavingsGroup = document.getElementById('current-savings-group');
+            const targetAmountGroup = document.getElementById('target-amount-group');
+            
+            // Result elements
+            const monthlyPaymentEl = document.getElementById('monthly-payment');
+            const totalPaymentEl = document.getElementById('total-payment');
+            const totalInterestEl = document.getElementById('total-interest');
+            const timeToGoalEl = document.getElementById('time-to-goal');
+            
+            let currentCalcType = 'loan';
+            
+            // Change calculator type
+            calcTypes.forEach(type => {
+                type.addEventListener('click', function() {
+                    calcTypes.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentCalcType = this.getAttribute('data-type');
+                    updateInputVisibility();
+                    resultDiv.style.display = 'none';
+                });
+            });
+            
+            // Update input visibility based on calculator type
+            function updateInputVisibility() {
+                // Hide all optional input groups first
+                compoundFrequencyGroup.style.display = 'none';
+                monthlyDepositGroup.style.display = 'none';
+                currentSavingsGroup.style.display = 'none';
+                targetAmountGroup.style.display = 'none';
+                
+                // Show relevant inputs based on calculator type
+                if (currentCalcType === 'compound') {
+                    compoundFrequencyGroup.style.display = 'block';
+                    monthlyDepositGroup.style.display = 'block';
+                } else if (currentCalcType === 'savings') {
+                    monthlyDepositGroup.style.display = 'block';
+                    currentSavingsGroup.style.display = 'block';
+                    targetAmountGroup.style.display = 'block';
+                } else if (currentCalcType === 'investment') {
+                    monthlyDepositGroup.style.display = 'block';
+                    currentSavingsGroup.style.display = 'block';
+                }
+            }
+            
+            // Calculate button event
+            calculateButton.addEventListener('click', function() {
+                const amount = parseFloat(loanAmount.value);
+                const rate = parseFloat(interestRate.value) / 100;
+                const term = parseFloat(loanTerm.value);
+                
+                if (isNaN(amount) || isNaN(rate) || isNaN(term)) {
+                    alert('Please enter valid numbers in all fields.');
+                    return;
+                }
+                
+                let monthlyPayment = 0;
+                let totalPayment = 0;
+                let totalInterest = 0;
+                let timeToGoal = 0;
+                
+                if (currentCalcType === 'loan') {
+                    // Loan calculation
+                    const monthlyRate = rate / 12;
+                    const numberOfPayments = term * 12;
+                    
+                    monthlyPayment = (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
+                    totalPayment = monthlyPayment * numberOfPayments;
+                    totalInterest = totalPayment - amount;
+                    
+                    monthlyPaymentEl.textContent = `$${monthlyPayment.toFixed(2)}`;
+                    totalPaymentEl.textContent = `$${totalPayment.toFixed(2)}`;
+                    totalInterestEl.textContent = `$${totalInterest.toFixed(2)}`;
+                    timeToGoalEl.textContent = `${term} years`;
+                    
+                } else if (currentCalcType === 'compound') {
+                    // Compound interest calculation
+                    const freq = parseInt(compoundFrequency.value);
+                    const deposit = parseFloat(monthlyDeposit.value) || 0;
+                    const periodicRate = rate / freq;
+                    const periods = term * freq;
+                    
+                    // Future value of initial amount
+                    const futureValueInitial = amount * Math.pow(1 + periodicRate, periods);
+                    
+                    // Future value of series of deposits
+                    const futureValueDeposits = deposit * freq * (Math.pow(1 + periodicRate, periods) - 1) / periodicRate;
+                    
+                    totalPayment = futureValueInitial + futureValueDeposits;
+                    totalInterest = totalPayment - amount - (deposit * freq * term);
+                    
+                    monthlyPaymentEl.textContent = `$${deposit.toFixed(2)}`;
+                    totalPaymentEl.textContent = `$${totalPayment.toFixed(2)}`;
+                    totalInterestEl.textContent = `$${totalInterest.toFixed(2)}`;
+                    timeToGoalEl.textContent = `${term} years`;
+                    
+                } else if (currentCalcType === 'savings') {
+                    // Savings goal calculation
+                    const deposit = parseFloat(monthlyDeposit.value) || 0;
+                    const savings = parseFloat(currentSavings.value) || 0;
+                    const target = parseFloat(targetAmount.value);
+                    
+                    const monthlyRate = rate / 12;
+                    let balance = savings;
+                    let months = 0;
+                    
+                    while (balance < target && months < 1200) { // Max 100 years
+                        balance = balance * (1 + monthlyRate) + deposit;
+                        months++;
+                    }
+                    
+                    timeToGoal = months / 12;
+                    totalInterest = balance - savings - (deposit * months);
+                    
+                    monthlyPaymentEl.textContent = `$${deposit.toFixed(2)}`;
+                    totalPaymentEl.textContent = `$${balance.toFixed(2)}`;
+                    totalInterestEl.textContent = `$${totalInterest.toFixed(2)}`;
+                    timeToGoalEl.textContent = `${timeToGoal.toFixed(1)} years`;
+                    
+                } else if (currentCalcType === 'investment') {
+                    // Investment return calculation
+                    const deposit = parseFloat(monthlyDeposit.value) || 0;
+                    const savings = parseFloat(currentSavings.value) || 0;
+                    const monthlyRate = rate / 12;
+                    const months = term * 12;
+                    
+                    // Future value of initial amount
+                    const futureValueInitial = savings * Math.pow(1 + monthlyRate, months);
+                    
+                    // Future value of series of deposits
+                    const futureValueDeposits = deposit * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+                    
+                    totalPayment = futureValueInitial + futureValueDeposits;
+                    totalInterest = totalPayment - savings - (deposit * months);
+                    
+                    monthlyPaymentEl.textContent = `$${deposit.toFixed(2)}`;
+                    totalPaymentEl.textContent = `$${totalPayment.toFixed(2)}`;
+                    totalInterestEl.textContent = `$${totalInterest.toFixed(2)}`;
+                    timeToGoalEl.textContent = `${term} years`;
+                }
+                
+                resultDiv.style.display = 'block';
+            });
+            
+            // Reset button event
+            resetButton.addEventListener('click', function() {
+                loanAmount.value = '10000';
+                interestRate.value = '5';
+                loanTerm.value = '5';
+                compoundFrequency.value = '12';
+                monthlyDeposit.value = '100';
+                currentSavings.value = '5000';
+                targetAmount.value = '20000';
+                resultDiv.style.display = 'none';
+            });
+            
+            // Initialize the calculator
+            updateInputVisibility();
+        });
+    </script>
+    <!-- home button -->
+  <script>
+(function(){
+    // Create container anchor
+    const a = document.createElement('a');
+    a.href = '/'; // change home URL if needed
+    a.title = 'Back to Home';
+    a.style.cssText = `
+        position: fixed;
+        right: 100px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        transition: transform .12s ease, box-shadow .12s ease;
+    `;
+    a.onmousedown = ()=>a.style.transform='scale(.96)';
+    a.onmouseup = ()=>a.style.transform='scale(1)';
+
+    // Create SVG icon
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+    svg.style.width = '24px';
+    svg.style.height = '24px';
+    svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+    // Create text span
+    const span = document.createElement('span');
+    span.textContent = 'Back to Home';
+
+    a.appendChild(svg);
+    a.appendChild(span);
+    document.body.appendChild(a);
+})();
+</script>
+</body>
+</html>

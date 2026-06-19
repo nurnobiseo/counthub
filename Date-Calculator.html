@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Calculator - Calculator Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 30px auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .calculator {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+        }
+
+        .calculator-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            color: #2575fc;
+            border-bottom: 3px solid #2575fc;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2575fc;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #2575fc;
+        }
+
+        .date-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .operation-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .op-btn {
+            padding: 12px;
+            border: 2px solid #2575fc;
+            background: white;
+            color: #2575fc;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .op-btn:hover {
+            background: #f0f5ff;
+        }
+
+        .op-btn.active {
+            background: #2575fc;
+            color: white;
+        }
+
+        .calculate-btn {
+            display: block;
+            width: 100%;
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            background: #1a60d0;
+        }
+
+        .results {
+            margin-top: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .results h3 {
+            color: #2575fc;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #2575fc;
+        }
+
+        .date-result {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #e6f7ff;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #2575fc;
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e6f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #2575fc;
+        }
+
+        .explanation h4 {
+            color: #2575fc;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0 10px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+                padding-left: 80px;
+            }
+            
+            .header p {
+                padding-left: 80px;
+            }
+            
+            .calculator {
+                padding: 15px;
+            }
+            
+            .date-inputs {
+                grid-template-columns: 1fr;
+            }
+            
+            .operation-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .header h1, .header p {
+                padding-left: 0;
+            }
+            
+            .calculator-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                text-align: center;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+ 
+            <h1>Date Calculator</h1>
+            <p>Calculate dates, add or subtract days, and find differences between dates</p>
+        </div>
+
+        <div class="calculator">
+            <div class="calculator-tabs">
+                <div class="tab active" data-tab="difference">Date Difference</div>
+                <div class="tab" data-tab="add-subtract">Add/Subtract Days</div>
+                <div class="tab" data-tab="day-finder">Day Finder</div>
+            </div>
+
+            <!-- Date Difference Tab -->
+            <div class="tab-content active" id="difference-tab">
+                <div class="input-group">
+                    <label>Start Date</label>
+                    <input type="date" id="start-date" value="">
+                </div>
+                
+                <div class="input-group">
+                    <label>End Date</label>
+                    <input type="date" id="end-date" value="">
+                </div>
+
+                <button class="calculate-btn" id="calculate-difference">
+                    Calculate Difference
+                </button>
+
+                <div class="results" id="difference-results">
+                    <h3>Date Difference Results</h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Days Between:</span>
+                        <span class="result-value" id="days-difference">0 days</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Weeks Between:</span>
+                        <span class="result-value" id="weeks-difference">0 weeks</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Months Between:</span>
+                        <span class="result-value" id="months-difference">0 months</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Years Between:</span>
+                        <span class="result-value" id="years-difference">0 years</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Workdays Between:</span>
+                        <span class="result-value" id="workdays-difference">0 workdays</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add/Subtract Days Tab -->
+            <div class="tab-content" id="add-subtract-tab">
+                <div class="input-group">
+                    <label>Start Date</label>
+                    <input type="date" id="base-date" value="">
+                </div>
+                
+                <div class="operation-selector">
+                    <button class="op-btn active" data-operation="add">Add Days</button>
+                    <button class="op-btn" data-operation="subtract">Subtract Days</button>
+                </div>
+                
+                <div class="input-group">
+                    <label>Number of Days</label>
+                    <input type="number" id="days-to-add" placeholder="Enter number of days" value="7" min="1">
+                </div>
+
+                <button class="calculate-btn" id="calculate-add-subtract">
+                    Calculate New Date
+                </button>
+
+                <div class="results" id="add-subtract-results">
+                    <h3>Calculation Results</h3>
+                    
+                    <div class="date-result" id="new-date-result">
+                        Select a date and operation
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Original Date:</span>
+                        <span class="result-value" id="original-date">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Operation:</span>
+                        <span class="result-value" id="operation-type">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Days Changed:</span>
+                        <span class="result-value" id="days-changed">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Day of Week:</span>
+                        <span class="result-value" id="new-day-of-week">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day Finder Tab -->
+            <div class="tab-content" id="day-finder-tab">
+                <div class="input-group">
+                    <label>Select a Date</label>
+                    <input type="date" id="find-day-date" value="">
+                </div>
+
+                <button class="calculate-btn" id="calculate-day">
+                    Find Day of Week
+                </button>
+
+                <div class="results" id="day-results">
+                    <h3>Day Finder Results</h3>
+                    
+                    <div class="date-result" id="day-of-week-result">
+                        Select a date
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Full Date:</span>
+                        <span class="result-value" id="full-date">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Day of Year:</span>
+                        <span class="result-value" id="day-of-year">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Week of Year:</span>
+                        <span class="result-value" id="week-of-year">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Days Until Next Holiday:</span>
+                        <span class="result-value" id="days-to-holiday">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="explanation">
+                <h4>About Date Calculations</h4>
+                <p>Date calculations are useful for planning events, tracking deadlines, and understanding time intervals. 
+                This calculator can determine the difference between two dates, add or subtract days from a date, and find 
+                the day of the week for any date. The calculations account for leap years and varying month lengths.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Calculator Hub &copy; 2025. All rights reserved.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates to today and 7 days from today
+            const today = new Date();
+            const nextWeek = new Date();
+            nextWeek.setDate(today.getDate() + 7);
+            
+            document.getElementById('start-date').valueAsDate = today;
+            document.getElementById('end-date').valueAsDate = nextWeek;
+            document.getElementById('base-date').valueAsDate = today;
+            document.getElementById('find-day-date').valueAsDate = today;
+            
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Deactivate all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                    
+                    // Activate current tab
+                    this.classList.add('active');
+                    document.getElementById(`${tabName}-tab`).classList.add('active');
+                });
+            });
+            
+            // Operation selector functionality
+            const opButtons = document.querySelectorAll('.op-btn');
+            opButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    opButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Date difference calculation
+            document.getElementById('calculate-difference').addEventListener('click', function() {
+                const startDate = new Date(document.getElementById('start-date').value);
+                const endDate = new Date(document.getElementById('end-date').value);
+                
+                if (isNaN(startDate) || isNaN(endDate)) {
+                    alert('Please select valid dates');
+                    return;
+                }
+                
+                if (startDate > endDate) {
+                    alert('Start date must be before end date');
+                    return;
+                }
+                
+                const timeDiff = Math.abs(endDate - startDate);
+                const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+                
+                // Calculate weeks, months, years
+                const weeksDiff = (daysDiff / 7).toFixed(1);
+                const monthsDiff = (daysDiff / 30.44).toFixed(1);
+                const yearsDiff = (daysDiff / 365.25).toFixed(1);
+                
+                // Calculate workdays (Monday to Friday)
+                let workdays = 0;
+                const currentDate = new Date(startDate);
+                while (currentDate <= endDate) {
+                    const dayOfWeek = currentDate.getDay();
+                    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                        workdays++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                
+                // Update results
+                document.getElementById('days-difference').textContent = `${daysDiff} days`;
+                document.getElementById('weeks-difference').textContent = `${weeksDiff} weeks`;
+                document.getElementById('months-difference').textContent = `${monthsDiff} months`;
+                document.getElementById('years-difference').textContent = `${yearsDiff} years`;
+                document.getElementById('workdays-difference').textContent = `${workdays} workdays`;
+            });
+            
+            // Add/subtract days calculation
+            document.getElementById('calculate-add-subtract').addEventListener('click', function() {
+                const baseDate = new Date(document.getElementById('base-date').value);
+                const daysToAdd = parseInt(document.getElementById('days-to-add').value);
+                const operation = document.querySelector('.op-btn.active').getAttribute('data-operation');
+                
+                if (isNaN(baseDate) || isNaN(daysToAdd) || daysToAdd < 1) {
+                    alert('Please enter valid values');
+                    return;
+                }
+                
+                const resultDate = new Date(baseDate);
+                if (operation === 'add') {
+                    resultDate.setDate(resultDate.getDate() + daysToAdd);
+                } else {
+                    resultDate.setDate(resultDate.getDate() - daysToAdd);
+                }
+                
+                // Format dates
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                const dayFormatter = new Intl.DateTimeFormat('en-US', {
+                    weekday: 'long'
+                });
+                
+                // Update results
+                document.getElementById('new-date-result').textContent = formatter.format(resultDate);
+                document.getElementById('original-date').textContent = formatter.format(baseDate);
+                document.getElementById('operation-type').textContent = operation === 'add' ? 'Added days' : 'Subtracted days';
+                document.getElementById('days-changed').textContent = daysToAdd;
+                document.getElementById('new-day-of-week').textContent = dayFormatter.format(resultDate);
+            });
+            
+            // Day finder calculation
+            document.getElementById('calculate-day').addEventListener('click', function() {
+                const inputDate = new Date(document.getElementById('find-day-date').value);
+                
+                if (isNaN(inputDate)) {
+                    alert('Please select a valid date');
+                    return;
+                }
+                
+                // Format dates
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                const dayFormatter = new Intl.DateTimeFormat('en-US', {
+                    weekday: 'long'
+                });
+                
+                // Calculate day of year
+                const startOfYear = new Date(inputDate.getFullYear(), 0, 0);
+                const diff = inputDate - startOfYear;
+                const oneDay = 1000 * 60 * 60 * 24;
+                const dayOfYear = Math.floor(diff / oneDay);
+                
+                // Calculate week of year
+                const firstDayOfYear = new Date(inputDate.getFullYear(), 0, 1);
+                const pastDaysOfYear = (inputDate - firstDayOfYear) / oneDay;
+                const weekOfYear = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+                
+                // Calculate days until next major holiday (New Year as example)
+                const nextHoliday = new Date(inputDate.getFullYear() + 1, 0, 1);
+                const daysToHoliday = Math.ceil((nextHoliday - inputDate) / oneDay);
+                
+                // Update results
+                document.getElementById('day-of-week-result').textContent = dayFormatter.format(inputDate);
+                document.getElementById('full-date').textContent = formatter.format(inputDate);
+                document.getElementById('day-of-year').textContent = dayOfYear;
+                document.getElementById('week-of-year').textContent = weekOfYear;
+                document.getElementById('days-to-holiday').textContent = `${daysToHoliday} days until New Year's Day`;
+            });
+            
+            // Calculate initial results on page load
+            document.getElementById('calculate-difference').click();
+            document.getElementById('calculate-add-subtract').click();
+            document.getElementById('calculate-day').click();
+        });
+    </script>
+         <!-- home button -->
+  <script>
+(function(){
+    // Create container anchor
+    const a = document.createElement('a');
+    a.href = '/'; // change home URL if needed
+    a.title = 'Back to Home';
+    a.style.cssText = `
+        position: fixed;
+        right: 100px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 12px;
+        border-radius: 30px;
+        background: white;
+        border: 1px solid rgba(0,0,0,0.1);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+        text-decoration: none;
+        color: black;
+        font-family: sans-serif;
+        font-size: 14px;
+        z-index: 9999;
+        transition: transform .12s ease, box-shadow .12s ease;
+    `;
+    a.onmousedown = ()=>a.style.transform='scale(.96)';
+    a.onmouseup = ()=>a.style.transform='scale(1)';
+
+    // Create SVG icon
+    const svgNS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('fill','none');
+    svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-width','2');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
+    svg.style.width = '24px';
+    svg.style.height = '24px';
+    svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+    // Create text span
+    const span = document.createElement('span');
+    span.textContent = 'Back to Home';
+
+    a.appendChild(svg);
+    a.appendChild(span);
+    document.body.appendChild(a);
+})();
+</script>
+</body>
+</html>

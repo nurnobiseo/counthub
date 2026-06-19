@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6a11cb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.3);
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            display: none;
+            text-align: center;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .due-date {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .trimester-info {
+            text-align: left;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .trimester-info h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .trimester-info ul {
+            padding-left: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .trimester-info li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .week-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+        
+        .week-indicator span {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 5px;
+        }
+        
+        .week-indicator span.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .icon {
+            font-size: 24px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-baby"></i> Pregnancy Calculator</h1>
+        <p class="description">Calculate your estimated due date and track your pregnancy progress based on the first day of your last menstrual period.</p>
+        
+        <div class="input-group">
+            <label for="lmp"><i class="fas fa-calendar-alt"></i> First Day of Last Menstrual Period</label>
+            <input type="date" id="lmp" required>
+        </div>
+        
+        <div class="input-group">
+            <label for="cycle"><i class="fas fa-clock"></i> Average Cycle Length (days)</label>
+            <input type="number" id="cycle" value="28" min="21" max="35">
+        </div>
+        
+        <button class="calculate-btn" onclick="calculatePregnancy()">
+            <i class="fas fa-calculator"></i> Calculate Due Date
+        </button>
+        
+        <div class="result" id="result">
+            <h3><i class="fas fa-baby"></i> Your Pregnancy Details</h3>
+            <p>Based on your input, here are your results:</p>
+            <div class="due-date" id="dueDate"></div>
+            <p>Estimated due date</p>
+            
+            <div class="week-indicator">
+                <span id="trimester1">1st Tri</span>
+                <span id="trimester2">2nd Tri</span>
+                <span id="trimester3">3rd Tri</span>
+            </div>
+            
+            <div class="trimester-info">
+                <h3><i class="fas fa-info-circle"></i> Current Trimester Information</h3>
+                <div id="trimesterDetails"></div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Note: This calculator provides an estimate only. Please consult with your healthcare provider for accurate information.</p>
+        </footer>
+    </div>
+
+    <script>
+        function calculatePregnancy() {
+            // Get input values
+            const lmpDate = new Date(document.getElementById('lmp').value);
+            const cycleLength = parseInt(document.getElementById('cycle').value) || 28;
+            
+            // Validate input
+            if (isNaN(lmpDate.getTime())) {
+                alert('Please enter a valid date for your last menstrual period');
+                return;
+            }
+            
+            // Calculate due date (typically 40 weeks from LMP)
+            const dueDate = new Date(lmpDate);
+            dueDate.setDate(dueDate.getDate() + 280);
+            
+            // Calculate current week of pregnancy
+            const today = new Date();
+            const diffTime = today - lmpDate;
+            const diffWeeks = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 7));
+            
+            // Determine trimester
+            let trimester = 1;
+            let trimesterText = "";
+            if (diffWeeks >= 13 && diffWeeks < 27) {
+                trimester = 2;
+            } else if (diffWeeks >= 27) {
+                trimester = 3;
+            }
+            
+            // Set trimester info based on current week
+            document.getElementById('trimester1').classList.remove('active');
+            document.getElementById('trimester2').classList.remove('active');
+            document.getElementById('trimester3').classList.remove('active');
+            
+            if (trimester === 1) {
+                document.getElementById('trimester1').classList.add('active');
+                trimesterText = `<ul>
+                    <li>You are in your first trimester (weeks 1-13)</li>
+                    <li>Baby's major organs begin to form</li>
+                    <li>You may experience morning sickness and fatigue</li>
+                    <li>First prenatal visit typically occurs during this time</li>
+                </ul>`;
+            } else if (trimester === 2) {
+                document.getElementById('trimester2').classList.add('active');
+                trimesterText = `<ul>
+                    <li>You are in your second trimester (weeks 14-26)</li>
+                    <li>Baby's movements may be felt</li>
+                    <li>Most women feel more energetic during this trimester</li>
+                    <li>Anatomy scan typically performed around 20 weeks</li>
+                </ul>`;
+            } else {
+                document.getElementById('trimester3').classList.add('active');
+                trimesterText = `<ul>
+                    <li>You are in your third trimester (weeks 27-40)</li>
+                    <li>Baby is growing rapidly and gaining weight</li>
+                    <li>You may experience more discomfort as baby grows</li>
+                    <li>Final preparations for baby's arrival</li>
+                </ul>`;
+            }
+            
+            // Format and display due date
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('dueDate').textContent = dueDate.toLocaleDateString('en-US', options);
+            
+            // Display trimester information
+            document.getElementById('trimesterDetails').innerHTML = `
+                <p>You are approximately <strong>${diffWeeks} weeks</strong> pregnant.</p>
+                ${trimesterText}
+            `;
+            
+            // Show result
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Set today's date as default for LMP
+        window.onload = function() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            document.getElementById('lmp').value = formattedDate;
+        };
+    </script>
+
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 100px;
+                bottom: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+</body>
+</html>

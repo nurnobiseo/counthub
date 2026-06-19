@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .timer-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            text-align: left;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6a11cb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.3);
+        }
+        
+        .timer-display {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+        }
+        
+        .time {
+            font-size: 80px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .time-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .time-label span {
+            flex: 1;
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-start {
+            background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+            color: white;
+        }
+        
+        .btn-pause {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+        }
+        
+        .btn-reset {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .progress-ring {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+        }
+        
+        .ring-background {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            position: absolute;
+        }
+        
+        .ring-progress {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            clip: rect(0px, 110px, 220px, 0px);
+            position: absolute;
+        }
+        
+        .progress-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 10px solid #6a11cb;
+            border-top: 10px solid transparent;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            transform: rotate(-90deg);
+            transition: all 1s linear;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .preset-btn {
+            padding: 10px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .completed-message {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .completed-message h3 {
+            color: #ffeb3b;
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+        
+        .icon {
+            font-size: 24px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 600px) {
+            .time {
+                font-size: 60px;
+            }
+            
+            .timer-input {
+                flex-direction: column;
+            }
+            
+            .input-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clock"></i> Countdown Timer</h1>
+        <p class="description">Set a countdown timer and track your time with a visual progress indicator.</p>
+        
+        <div class="timer-input">
+            <div class="input-group">
+                <label for="hours"><i class="far fa-clock"></i> Hours</label>
+                <input type="number" id="hours" placeholder="0" min="0" max="99">
+            </div>
+            
+            <div class="input-group">
+                <label for="minutes"><i class="far fa-clock"></i> Minutes</label>
+                <input type="number" id="minutes" placeholder="0" min="0" max="59">
+            </div>
+            
+            <div class="input-group">
+                <label for="seconds"><i class="far fa-clock"></i> Seconds</label>
+                <input type="number" id="seconds" placeholder="0" min="0" max="59">
+            </div>
+        </div>
+        
+        <div class="preset-buttons">
+            <button class="preset-btn" onclick="setPresetTime(1, 0, 0)">1 Hour</button>
+            <button class="preset-btn" onclick="setPresetTime(0, 30, 0)">30 Minutes</button>
+            <button class="preset-btn" onclick="setPresetTime(0, 15, 0)">15 Minutes</button>
+            <button class="preset-btn" onclick="setPresetTime(0, 5, 0)">5 Minutes</button>
+            <button class="preset-btn" onclick="setPresetTime(0, 1, 0)">1 Minute</button>
+        </div>
+        
+        <div class="progress-ring">
+            <div class="ring-background"></div>
+            <div class="ring-progress">
+                <div class="progress-circle" id="progress-circle"></div>
+            </div>
+            <div class="timer-display">
+                <div class="time" id="time">00:00:00</div>
+                <div class="time-label">
+                    <span>Hours</span>
+                    <span>Minutes</span>
+                    <span>Seconds</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="completed-message" id="completed-message">
+            <h3><i class="fas fa-check-circle"></i> Time's Up!</h3>
+            <p>Your countdown timer has finished.</p>
+        </div>
+        
+        <div class="timer-controls">
+            <button class="btn btn-start" id="start-btn" onclick="startTimer()">
+                <i class="fas fa-play"></i> Start
+            </button>
+            <button class="btn btn-pause" id="pause-btn" onclick="pauseTimer()" disabled>
+                <i class="fas fa-pause"></i> Pause
+            </button>
+            <button class="btn btn-reset" id="reset-btn" onclick="resetTimer()" disabled>
+                <i class="fas fa-redo"></i> Reset
+            </button>
+        </div>
+        
+        <footer>
+            <p>Set your desired time and start the countdown. The circular progress indicator will show the remaining time.</p>
+        </footer>
+    </div>
+
+    <script>
+        let countdown;
+        let totalSeconds = 0;
+        let remainingSeconds = 0;
+        let isRunning = false;
+        const progressCircle = document.getElementById('progress-circle');
+        const timeDisplay = document.getElementById('time');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const completedMessage = document.getElementById('completed-message');
+        
+        function setPresetTime(hours, minutes, seconds) {
+            document.getElementById('hours').value = hours;
+            document.getElementById('minutes').value = minutes;
+            document.getElementById('seconds').value = seconds;
+            resetTimer();
+        }
+        
+        function startTimer() {
+            if (isRunning) return;
+            
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+            
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                alert('Please set a time greater than 0');
+                return;
+            }
+            
+            if (!isRunning) {
+                if (remainingSeconds === 0) {
+                    totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                    remainingSeconds = totalSeconds;
+                }
+                
+                isRunning = true;
+                startBtn.disabled = true;
+                pauseBtn.disabled = false;
+                resetBtn.disabled = false;
+                completedMessage.style.display = 'none';
+                
+                countdown = setInterval(() => {
+                    if (remainingSeconds <= 0) {
+                        clearInterval(countdown);
+                        timerComplete();
+                        return;
+                    }
+                    
+                    remainingSeconds--;
+                    updateDisplay();
+                    
+                    // Update progress circle
+                    const progress = 360 - (remainingSeconds / totalSeconds * 360);
+                    progressCircle.style.transform = `rotate(-90deg) rotate(${progress}deg)`;
+                }, 1000);
+            }
+        }
+        
+        function pauseTimer() {
+            clearInterval(countdown);
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+        }
+        
+        function resetTimer() {
+            clearInterval(countdown);
+            isRunning = false;
+            remainingSeconds = 0;
+            totalSeconds = 0;
+            progressCircle.style.transform = 'rotate(-90deg) rotate(0deg)';
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            resetBtn.disabled = true;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
+            completedMessage.style.display = 'none';
+            
+            const hours = parseInt(document.getElementById('hours').value) || 0;
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+            
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                timeDisplay.textContent = '00:00:00';
+            } else {
+                updateDisplay();
+            }
+        }
+        
+        function updateDisplay() {
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+            
+            timeDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function timerComplete() {
+            isRunning = false;
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            resetBtn.disabled = false;
+            completedMessage.style.display = 'block';
+            
+            // Play completion sound
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBStztvLJjFgVABVQj8bSqHgsCgAGKXvR5siGYSwJAAYudcXp0JxrNQ4ACjV/yu3TpXM7EgAQPYbR8dirfUAYABREi9P03bOFSRwAF0qR2vjhuY1NHAAaUJbd/ebBlFciABxWm+EA68icXCYAH1yg5gPvzKNiKQAiYqXpBvLQqGcsACRmq+0K9dSsbDAAJ2yw8Q342LJxMwAqcbT0D/veuHY3ACx0t/cS/uG9fD0AL3e7+xUB5MGDQgAyfL/+GATnxYlHADWAxAAeCOvJjksAN4TIBCMM8M6TUQA6h8sHJw/00ZhWADyLzgkrEvfVnVsAPo/RCy4X+9miYABBktQPNB3926dkAEOV1xA3Iv/dq2gARZfaEjsnA+GwawBHmtwUPSoG5LNvAEmd3hZALQnmuHQAS5/gGEMwDOu7eQBNouIaRTQP78B+AE+k5BxINhLyw4IAUKbmHks5FfbGhgBSqOggTTwY+smKAFSq6iJQQBv9zI4AVqzsJFJDHv/OkwBYru4mVUYiAtCWAEqu8ChYSSUE1JoATLDxKltMKAfXngBOsvMrXU8rCtqiAFG09S1gUy4N3aYAU7b3MGNXMRDfqQBVt/kzZlw0E+KuAFe5+zdqYTcW5bEAWbr9O25kOhnntABbvP8+c2g9HOq3AF2+4UB4bEAf7bsAX7/iQn1wQyLwvQBhwONFgnVGJfPBAGPB5EiHeUkp98UAZcLlS4t8TCz7yQBmw+dOj4BQMP/NAGjE6FGSg1Q0A9EAacXpVJWGWDkG0wBrxupXmIlaPQvUAGzH7FqcjF1AENcAbcjuXaCPYkUT2gBvye9go5NnShbdAHDK8WOnmW1QGd8AccvzZqudclUb4gBzzfVpr6B4WB3kAHTO92u0o31dIOcAdc/5brqphGIl6gB30ftxwK+IaSftAHjS/XTEs45vLPAAedP/d8e2knQy8wB61QB6zLqXeTf2AHvWAXzRvpyAQfwAfdgCf9TBo4NFAQ==');
+            audio.play();
+        }
+        
+        // Input validation
+        document.getElementById('hours').addEventListener('input', function() {
+            if (this.value > 99) this.value = 99;
+            if (this.value < 0) this.value = 0;
+        });
+        
+        document.getElementById('minutes').addEventListener('input', function() {
+            if (this.value > 59) this.value = 59;
+            if (this.value < 0) this.value = 0;
+        });
+        
+        document.getElementById('seconds').addEventListener('input', function() {
+            if (this.value > 59) this.value = 59;
+            if (this.value < 0) this.value = 0;
+        });
+        
+        // Initialize display
+        updateDisplay();
+    </script>
+
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+</body>
+</html>

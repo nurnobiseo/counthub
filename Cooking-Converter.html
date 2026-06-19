@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooking Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); 
+            color: #5a3e36;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #5a3e36;
+        }
+        
+        .description {
+            color: #7d5d4f;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .converter {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-group {
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #5a3e36;
+        }
+        
+        .input-with-unit {
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e7d5cc;
+            border-radius: 10px;
+            font-size: 16px;
+            color: #5a3e36;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #ff9a9e;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.3);
+        }
+        
+        .unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff9a9e;
+            font-weight: 600;
+        }
+        
+        .convert-btn {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .convert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255, 250, 250, 0.9);
+            border-radius: 15px;
+            display: none;
+            text-align: center;
+            border: 1px solid #fad0c4;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #5a3e36;
+        }
+        
+        .converted-value {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 15px 0;
+            color: #ff9a9e;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 25px;
+            gap: 10px;
+        }
+        
+        .measure-unit {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 250, 250, 0.9);
+            border-radius: 10px;
+            flex: 1;
+            min-width: 120px;
+            border: 1px solid #fad0c4;
+        }
+        
+        .measure-unit h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #5a3e36;
+        }
+        
+        .measure-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff9a9e;
+        }
+        
+        .common-measures {
+            text-align: left;
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(255, 250, 250, 0.9);
+            border-radius: 15px;
+            border: 1px solid #fad0c4;
+        }
+        
+        .common-measures h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #5a3e36;
+        }
+        
+        .common-measures ul {
+            padding-left: 20px;
+            color: #7d5d4f;
+        }
+        
+        .common-measures li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        footer {
+            margin-top: 30px;
+            color: #7d5d4f;
+            font-size: 14px;
+        }
+        
+        .icon {
+            font-size: 24px;
+            vertical-align: middle;
+        }
+        
+        .category-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .category-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #f8f0ec;
+            color: #5a3e36;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-btn.active {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+        }
+        
+        .conversion-types {
+            display: none;
+        }
+        
+        .conversion-types.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-utensils"></i> Cooking Converter</h1>
+        <p class="description">Easily convert between different cooking measurements - volume, weight, and temperature.</p>
+        
+        <div class="category-selector">
+            <button class="category-btn active" onclick="showCategory('volume')">Volume</button>
+            <button class="category-btn" onclick="showCategory('weight')">Weight</button>
+            <button class="category-btn" onclick="showCategory('temperature')">Temperature</button>
+        </div>
+        
+        <!-- Volume Conversion -->
+        <div id="volume-converter" class="conversion-types active">
+            <div class="converter">
+                <div class="input-group">
+                    <label for="volume"><i class="fas fa-glass-whiskey"></i> Volume Value</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="volume" placeholder="Enter volume" step="0.1" min="0">
+                        <span class="unit" id="volumeInputUnit">cups</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="fromVolumeUnit"><i class="fas fa-exchange-alt"></i> Convert From</label>
+                    <select id="fromVolumeUnit" onchange="updateVolumeInputUnit()">
+                        <option value="cups">Cups</option>
+                        <option value="tbsp">Tablespoons (tbsp)</option>
+                        <option value="tsp">Teaspoons (tsp)</option>
+                        <option value="ml">Milliliters (ml)</option>
+                        <option value="l">Liters (l)</option>
+                        <option value="floz">Fluid Ounces (fl oz)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="toVolumeUnit"><i class="fas fa-long-arrow-alt-right"></i> Convert To</label>
+                    <select id="toVolumeUnit">
+                        <option value="tbsp">Tablespoons (tbsp)</option>
+                        <option value="cups">Cups</option>
+                        <option value="tsp">Teaspoons (tsp)</option>
+                        <option value="ml">Milliliters (ml)</option>
+                        <option value="l">Liters (l)</option>
+                        <option value="floz">Fluid Ounces (fl oz)</option>
+                    </select>
+                </div>
+                
+                <button class="convert-btn" onclick="convertVolume()">
+                    <i class="fas fa-sync-alt"></i> Convert Volume
+                </button>
+            </div>
+        </div>
+        
+        <!-- Weight Conversion -->
+        <div id="weight-converter" class="conversion-types">
+            <div class="converter">
+                <div class="input-group">
+                    <label for="weight"><i class="fas fa-weight-hanging"></i> Weight Value</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="weight" placeholder="Enter weight" step="0.1" min="0">
+                        <span class="unit" id="weightInputUnit">g</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="fromWeightUnit"><i class="fas fa-exchange-alt"></i> Convert From</label>
+                    <select id="fromWeightUnit" onchange="updateWeightInputUnit()">
+                        <option value="g">Grams (g)</option>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="oz">Ounces (oz)</option>
+                        <option value="lb">Pounds (lb)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="toWeightUnit"><i class="fas fa-long-arrow-alt-right"></i> Convert To</label>
+                    <select id="toWeightUnit">
+                        <option value="oz">Ounces (oz)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="kg">Kilograms (kg)</option>
+                        <option value="lb">Pounds (lb)</option>
+                    </select>
+                </div>
+                
+                <button class="convert-btn" onclick="convertWeight()">
+                    <i class="fas fa-sync-alt"></i> Convert Weight
+                </button>
+            </div>
+        </div>
+        
+        <!-- Temperature Conversion -->
+        <div id="temperature-converter" class="conversion-types">
+            <div class="converter">
+                <div class="input-group">
+                    <label for="temperature"><i class="fas fa-thermometer-half"></i> Temperature Value</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="temperature" placeholder="Enter temperature" step="0.1">
+                        <span class="unit" id="tempInputUnit">°C</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="fromTempUnit"><i class="fas fa-exchange-alt"></i> Convert From</label>
+                    <select id="fromTempUnit" onchange="updateTempInputUnit()">
+                        <option value="c">Celsius (°C)</option>
+                        <option value="f">Fahrenheit (°F)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="toTempUnit"><i class="fas fa-long-arrow-alt-right"></i> Convert To</label>
+                    <select id="toTempUnit">
+                        <option value="f">Fahrenheit (°F)</option>
+                        <option value="c">Celsius (°C)</option>
+                    </select>
+                </div>
+                
+                <button class="convert-btn" onclick="convertTemperature()">
+                    <i class="fas fa-sync-alt"></i> Convert Temperature
+                </button>
+            </div>
+        </div>
+        
+        <div class="result" id="result">
+            <h3><i class="fas fa-mortar-pestle"></i> Conversion Result</h3>
+            <div class="converted-value" id="convertedValue">0</div>
+            <p id="conversionFormula"></p>
+            
+            <div class="common-measures">
+                <h3><i class="fas fa-info-circle"></i> Common Cooking References</h3>
+                <ul id="cookingReferences">
+                    <li>1 cup = 16 tablespoons = 48 teaspoons</li>
+                    <li>1 tablespoon = 3 teaspoons</li>
+                    <li>1 cup = 240 ml</li>
+                    <li>1 ounce = 28.35 grams</li>
+                    <li>Water boils at 100°C (212°F)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Note: These conversions are approximate for cooking purposes.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Show/hide conversion categories
+        function showCategory(category) {
+            // Hide all converters
+            document.querySelectorAll('.conversion-types').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected converter and activate button
+            document.getElementById(`${category}-converter`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Reset result
+            document.getElementById('result').style.display = 'none';
+        }
+        
+        // Volume conversion functions
+        function updateVolumeInputUnit() {
+            const fromUnit = document.getElementById('fromVolumeUnit').value;
+            document.getElementById('volumeInputUnit').textContent = fromUnit;
+        }
+        
+        function convertVolume() {
+            const volumeInput = parseFloat(document.getElementById('volume').value);
+            const fromUnit = document.getElementById('fromVolumeUnit').value;
+            const toUnit = document.getElementById('toVolumeUnit').value;
+            
+            if (isNaN(volumeInput) || volumeInput < 0) {
+                alert('Please enter a valid volume value');
+                return;
+            }
+            
+            // Convert to milliliters first (base unit)
+            let mlValue;
+            switch(fromUnit) {
+                case 'cups': mlValue = volumeInput * 240; break;
+                case 'tbsp': mlValue = volumeInput * 15; break;
+                case 'tsp': mlValue = volumeInput * 5; break;
+                case 'ml': mlValue = volumeInput; break;
+                case 'l': mlValue = volumeInput * 1000; break;
+                case 'floz': mlValue = volumeInput * 29.5735; break;
+            }
+            
+            // Convert from milliliters to target unit
+            let result;
+            switch(toUnit) {
+                case 'cups': result = mlValue / 240; break;
+                case 'tbsp': result = mlValue / 15; break;
+                case 'tsp': result = mlValue / 5; break;
+                case 'ml': result = mlValue; break;
+                case 'l': result = mlValue / 1000; break;
+                case 'floz': result = mlValue / 29.5735; break;
+            }
+            
+            // Display result
+            document.getElementById('convertedValue').textContent = `${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('conversionFormula').textContent = `${volumeInput} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Weight conversion functions
+        function updateWeightInputUnit() {
+            const fromUnit = document.getElementById('fromWeightUnit').value;
+            document.getElementById('weightInputUnit').textContent = fromUnit;
+        }
+        
+        function convertWeight() {
+            const weightInput = parseFloat(document.getElementById('weight').value);
+            const fromUnit = document.getElementById('fromWeightUnit').value;
+            const toUnit = document.getElementById('toWeightUnit').value;
+            
+            if (isNaN(weightInput) || weightInput < 0) {
+                alert('Please enter a valid weight value');
+                return;
+            }
+            
+            // Convert to grams first (base unit)
+            let gValue;
+            switch(fromUnit) {
+                case 'g': gValue = weightInput; break;
+                case 'kg': gValue = weightInput * 1000; break;
+                case 'oz': gValue = weightInput * 28.35; break;
+                case 'lb': gValue = weightInput * 453.592; break;
+            }
+            
+            // Convert from grams to target unit
+            let result;
+            switch(toUnit) {
+                case 'g': result = gValue; break;
+                case 'kg': result = gValue / 1000; break;
+                case 'oz': result = gValue / 28.35; break;
+                case 'lb': result = gValue / 453.592; break;
+            }
+            
+            // Display result
+            document.getElementById('convertedValue').textContent = `${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('conversionFormula').textContent = `${weightInput} ${fromUnit} = ${result.toFixed(2)} ${toUnit}`;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Temperature conversion functions
+        function updateTempInputUnit() {
+            const fromUnit = document.getElementById('fromTempUnit').value;
+            document.getElementById('tempInputUnit').textContent = fromUnit === 'c' ? '°C' : '°F';
+        }
+        
+        function convertTemperature() {
+            const tempInput = parseFloat(document.getElementById('temperature').value);
+            const fromUnit = document.getElementById('fromTempUnit').value;
+            const toUnit = document.getElementById('toTempUnit').value;
+            
+            if (isNaN(tempInput)) {
+                alert('Please enter a valid temperature value');
+                return;
+            }
+            
+            let result;
+            let formula = "";
+            
+            if (fromUnit === 'c' && toUnit === 'f') {
+                result = (tempInput * 9/5) + 32;
+                formula = `(${tempInput}°C × 9/5) + 32 = ${result.toFixed(1)}°F`;
+            } else if (fromUnit === 'f' && toUnit === 'c') {
+                result = (tempInput - 32) * 5/9;
+                formula = `(${tempInput}°F - 32) × 5/9 = ${result.toFixed(1)}°C`;
+            } else {
+                result = tempInput;
+                formula = `${tempInput}°${fromUnit.toUpperCase()} = ${result.toFixed(1)}°${toUnit.toUpperCase()}`;
+            }
+            
+            // Display result
+            document.getElementById('convertedValue').textContent = `${result.toFixed(1)}°${toUnit.toUpperCase()}`;
+            document.getElementById('conversionFormula').textContent = formula;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Set default values on load
+        window.onload = function() {
+            document.getElementById('volume').value = 1;
+            document.getElementById('weight').value = 100;
+            document.getElementById('temperature').value = 180;
+            updateVolumeInputUnit();
+            updateWeightInputUnit();
+            updateTempInputUnit();
+        };
+    </script>
+
+    <script>
+        (function(){
+            // Create container anchor
+            const a = document.createElement('a');
+            a.href = '/'; // change home URL if needed
+            a.title = 'Back to Home';
+            a.style.cssText = `
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 30px;
+                background: white;
+                border: 1px solid rgba(0,0,0,0.1);
+                box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+                text-decoration: none;
+                color: black;
+                font-family: sans-serif;
+                font-size: 14px;
+                z-index: 9999;
+                transition: transform .12s ease, box-shadow .12s ease;
+            `;
+            a.onmousedown = ()=>a.style.transform='scale(.96)';
+            a.onmouseup = ()=>a.style.transform='scale(1)';
+
+            // Create SVG icon
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('viewBox','0 0 24 24');
+            svg.setAttribute('fill','none');
+            svg.setAttribute('stroke','currentColor');
+            svg.setAttribute('stroke-width','2');
+            svg.setAttribute('stroke-linecap','round');
+            svg.setAttribute('stroke-linejoin','round');
+            svg.style.width = '24px';
+            svg.style.height = '24px';
+            svg.innerHTML = `<path d="M3 9L12 2l9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5h-4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/>`;
+
+            // Create text span
+            const span = document.createElement('span');
+            span.textContent = 'Back to Home';
+
+            a.appendChild(svg);
+            a.appendChild(span);
+            document.body.appendChild(a);
+        })();
+    </script>
+</body>
+</html>
